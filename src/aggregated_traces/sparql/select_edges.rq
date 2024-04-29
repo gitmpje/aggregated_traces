@@ -3,14 +3,20 @@ PREFIX : <http://example.org/def/ekg/aggregated_traces/>
 SELECT DISTINCT
   ?nodeIn
   ?nodeOut
-  ?edge_type
-  ?edge_amount
-  ?edge_fraction
+  (coalesce(?edge_amount, "") as ?edge_amount)
+  (group_concat(distinct concat(str(?edge_amount), " - ", ?entity_label, " [", ?edge_class, "]"); separator="\n") as ?edge_amountEntityClass)
+  (coalesce(?edge_fraction, "") as ?edge_fraction)
 WHERE {
   ?DFRelation a :DFRelation ;
-    a ?edge_type ;
     :source ?nodeIn ;
     :target ?nodeOut .
-  OPTIONAL { ?DFRelation :quantity/:amount ?edge_amount }
   OPTIONAL { ?DFRelation :fraction ?edge_fraction }
+  OPTIONAL {
+    ?DFRelation :quantity [
+        :amount ?edge_amount ;
+        :class ?edge_class ;
+        :fromEntity/rdfs:label ?entity_label ;
+      ] .
+  }
 }
+GROUP BY ?DFRelation

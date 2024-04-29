@@ -1,0 +1,52 @@
+@startuml
+set namespaceSeparator none
+
+package "Core Meta-Model\n(Esser and Fahland, 2021; Fahland, 2022; Swevels et al., 2023)" <<Rectangle>> {
+    object Event #LightBlue {
+        activity : string
+        timestamp : datetime
+    }
+    object Entity #LightGreen {
+        id : string
+        type : string
+    }
+    object Activity #LightYellow {
+        name : string
+    }
+    ' object Log #SkyBlue {
+    '     id : string
+    ' }
+
+    Event --> Entity : entity
+    Event --> Activity : observed
+    Entity --> Entity : relation
+    ' Log --> Event : event
+
+    Event --> Event : directlyFollows
+    Activity --> Activity : directlyFollowsActivity
+}
+
+package "Aggregation Extension\n(inspired by EPCIS2.0 Aggregation Event)" <<Rectangle>> {
+    object Aggregation
+    object Split
+    object Merge
+    object Consume
+    Aggregation --|> Event
+    Split --|> Aggregation
+    Merge --|> Aggregation
+    Consume --|> Aggregation
+
+    object AggregatedEntity
+    AggregatedEntity --|> Entity
+
+    object Quantity {
+        amount : float
+        class : string
+    }
+    Aggregation --> Quantity : inputQuantity
+    Aggregation --> Quantity : outputQuantity
+    Quantity --> AggregatedEntity : fromEntity
+
+    ' Aggregation --> Aggregation : directlyFollowsAggregation
+}
+@enduml

@@ -2,11 +2,13 @@ PREFIX : <http://example.org/def/ekg/aggregated_traces/>
 
 SELECT DISTINCT
   ?node
-  ?node_operation
-  (concat(?node_label, str(?time)) as ?node_label)
+  ?node_label
+  (group_concat(distinct str(?node_type)) as ?node_types)
+  (concat(group_concat(?entity_label), " @ ", str(?time)) as ?node_entitiesTime)
 WHERE {
   [] :source|:target ?node .
-  ?node rdfs:label ?node_label ;
+  ?node a ?node_type ;
+    rdfs:label ?node_label ;
     prov:entity/rdfs:label ?entity_label ;
     prov:atTime ?time .
 }
