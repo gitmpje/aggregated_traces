@@ -1,0 +1,16 @@
+PREFIX : <http://example.org/def/ekg/aggregated_traces/>
+
+SELECT DISTINCT
+  ?nodeIn
+  ?nodeOut
+  ?edge_type
+  ?edge_amount
+  ?edge_fraction
+WHERE {
+  ?DFRelation a :DFRelation ;
+    a ?edge_type ;
+    :source ?nodeIn ;
+    :target ?nodeOut .
+  OPTIONAL { ?DFRelation :quantity/:amount ?edge_amount }
+  OPTIONAL { ?DFRelation :fraction ?edge_fraction }
+}
