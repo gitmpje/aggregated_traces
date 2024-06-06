@@ -8,8 +8,13 @@ SELECT DISTINCT
 WHERE {
   [] :source|:target ?node .
   ?node a ?node_type ;
-    rdfs:label ?node_label ;
-    prov:entity/rdfs:label ?entity_label ;
+    prov:entity ?entity ;
     prov:atTime ?time .
+
+  OPTIONAL { ?node rdfs:label ?_node_label }
+  BIND ( coalesce(?_node_label, replace(str(?node), ".+/([a-zA-Z0-9_]+)$", "$1")) as ?node_label )
+
+  OPTIONAL { ?entity rdfs:label ?_entity_label }
+  BIND ( coalesce(?_entity_label, replace(str(?entity), ".+/([a-zA-Z0-9_]+)$", "$1")) as ?entity_label )
 }
 GROUP BY ?node

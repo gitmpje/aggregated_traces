@@ -3,10 +3,10 @@ PREFIX : <http://example.org/def/ekg/aggregated_traces/>
 PREFIX prov: <http://www.w3.org/ns/prov#>
 
 INSERT {
-    ?DFRelation a :DFRelation ;
-        :source ?EventSource ;
-        :target ?EventTarget ;
-        :quantity ?Quantity .
+  ?DFRelation a :DirectlyFollows , :DirectlyFollows_AggregatedEntity ;
+    :source ?EventSource ;
+    :target ?EventTarget ;
+    :quantity ?Quantity .
 }
 WHERE {
   {
@@ -18,6 +18,8 @@ WHERE {
       [] prov:entity ?AggregatedEntity ;
         prov:atTime ?time_later .
       FILTER( ?time_later > ?time )
+
+      ?AggregatedEntity a :AggregatedEntity .
     }
     GROUP BY ?AggregatedEntity ?EventSource
   }
@@ -32,7 +34,7 @@ WHERE {
     ?EventSource :outputQuantity ?SourceOutputQuantity .
     ?SourceOutputQuantity :fromEntity ?AggregatedEntity .
   }
-  bind(coalesce(?TargetInputQuantity, ?SourceOutputQuantity) as ?Quantity)
+  BIND ( coalesce(?TargetInputQuantity, ?SourceOutputQuantity) as ?Quantity )
 
-  BIND( iri(md5(concat(str(?EventSource), str(?EventTarget)))) as ?DFRelation )
+  BIND ( iri(md5(concat(str(?EventSource), str(?EventTarget)))) as ?DFRelation )
 }

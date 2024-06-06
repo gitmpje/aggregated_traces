@@ -7,7 +7,7 @@ SELECT DISTINCT
   (group_concat(distinct concat(str(?edge_amount), " - ", ?entity_label, " [", ?edge_class, "]"); separator="\n") as ?edge_amountEntityClass)
   (coalesce(?edge_fraction, "") as ?edge_fraction)
 WHERE {
-  ?DFRelation a :DFRelation ;
+  ?DFRelation a :DirectlyFollows ;
     :source ?nodeIn ;
     :target ?nodeOut .
   OPTIONAL { ?DFRelation :fraction ?edge_fraction }
@@ -15,8 +15,11 @@ WHERE {
     ?DFRelation :quantity [
         :amount ?edge_amount ;
         :class ?edge_class ;
-        :fromEntity/rdfs:label ?entity_label ;
+        :fromEntity ?entity ;
       ] .
+
+    OPTIONAL { ?entity rdfs:label ?_entity_label }
+    BIND ( coalesce(?_entity_label, replace(str(?entity), ".+/([a-zA-Z0-9_]+)$", "$1")) as ?entity_label )
   }
 }
 GROUP BY ?DFRelation
