@@ -8,10 +8,9 @@ SELECT DISTINCT
   (group_concat(distinct concat(str(?_edge_amount), " - ", ?entity_label, " [", ?edge_class, "]"); separator="\n") as ?edge_amountEntityClass)
   (group_concat(distinct concat(
     coalesce(str(?_edge_amount), ""), " - ",
-    coalesce(?entity_label, ""), " [",
-    coalesce(?edge_class, ""), "] {",
+    coalesce(?entity_label, ""), " {",
     coalesce(str(?_edge_fraction), ""), "}"
-  ); separator="\n") as ?edge_amountEntityClassFraction)
+  ); separator="\n") as ?edge_amountEntityFraction)
   (coalesce(?_edge_fraction, "") as ?edge_fraction)
 WHERE {
   VALUES ?type {
