@@ -1,0 +1,82 @@
+@startuml
+' https://crashedmind.github.io/PlantUMLHitchhikersGuide/layout/layout.html
+
+set namespaceSeparator none
+' left to right direction
+
+' package "EKG pattern" <<Rectangle>> {
+
+    object "Quantity" as Quantity1 {
+        amount: q<sub>1</sub>
+    }
+    object "Quantity" as Quantity2 {
+        amount: q<sub>2</sub>
+    }
+    object "Quantity" as Quantity3 {
+        amount: q<sub>3</sub>
+    }
+
+    object "AggregatedEntity" as AggregatedEntity1 #LightGreen
+    object "AggregatedEntity" as AggregatedEntity2 #LightGreen
+
+    object "Event" as Event1 #LightBlue {
+        timestamp : t<sub>1</sub>
+    }
+    object "Event" as Event2 #LightBlue {
+        timestamp : t<sub>2</sub>
+    }
+    object "Aggregation" as Event3 #LightBlue {
+        timestamp : t<sub>3</sub>
+        action : ADD
+    }
+    object "Event" as Event4 #LightBlue {
+        timestamp : t<sub>4</sub>
+    }
+
+    ' Event1 -[norank]-> AggregatedEntity1 #LightGrey : entity
+    ' Event2 -[norank]-> AggregatedEntity2 #LightGrey : entity
+    Event3 -[norank]-> AggregatedEntity1 #LightGrey : parentEntity
+    ' Event4 -[norank]-> AggregatedEntity1 #LightGrey : entity
+
+    Event1 --> Quantity1 #Grey : quantity
+    ' Event2 --> Quantity2 #Grey : quantity
+    Event3 --> Quantity2 #Grey : childQuantity
+    Event4 --> Quantity3 #Grey : quantity
+    Quantity1 --> AggregatedEntity1 #Grey : class
+    Quantity2 --> AggregatedEntity2 #Grey : class
+    Quantity3 --> AggregatedEntity1 #Grey : class
+' }
+
+' package "Directly follows (derived)" <<Rectangle>> {
+    Event1 --> Event3 : directlyFollows_AggregatedEntity
+    object "DirectlyFollows_AggregatedEntity" as DF1_3 #LightYellow {
+        amount: q<sub>1</sub>
+        ' fraction:
+    }
+    (Event1, Event3) . DF1_3
+
+    Event2 --> Event3 : directlyFollows_AggregatedEntity
+    object "DirectlyFollows_AggregatedEntity" as DF2_3 #LightYellow {
+        amount: q<sub>2</sub>
+        ' fraction:
+    }
+    (Event2, Event3) . DF2_3
+
+    Event3 --> Event4 : directlyFollows_AggregatedEntity
+    object "DirectlyFollows_AggregatedEntity" as DF3_4 #LightYellow {
+        amount: q<sub>3</sub>
+        fraction: q<sub>3</sub>/(q<sub>1</sub>+q<sub>2</sub>)
+    }
+    (Event3, Event4) . DF3_4
+' }
+
+' QuantityInput1 -[dotted]- FlowRelation1
+' QuantityInput2 -[dotted]- FlowRelation2
+' AggregatedEntity1State1 -[dotted]- AggregatedEntity1
+' AggregatedEntity1State2 -[dotted]- AggregatedEntity1
+' AggregatedEntity2State1 -[dotted]- AggregatedEntity2
+
+' Event1 -r[hidden]- Merge
+' Event2 -l[hidden]- Merge
+' AggregatedEntity1State1 -r[hidden]- AggregatedEntity2State1
+@enduml

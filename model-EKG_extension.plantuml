@@ -10,7 +10,7 @@ package "Core Meta-Model\n(Esser and Fahland, 2021; Fahland, 2022; Swevels et al
         id : string
         type : string
     }
-    object Activity #LightYellow {
+    object Activity #Yellow {
         name : string
     }
     ' object Log #SkyBlue {
@@ -23,30 +23,52 @@ package "Core Meta-Model\n(Esser and Fahland, 2021; Fahland, 2022; Swevels et al
     ' Log --> Event : event
 
     Event --> Event : directlyFollows
+    Event --> Event : directlyPrecedes
     Activity --> Activity : directlyFollowsActivity
 }
 
-package "Aggregation Extension\n(inspired by EPCIS2.0 Aggregation Event)" <<Rectangle>> {
-    object Aggregation
-    object Split
-    object Merge
-    object Consume
-    Aggregation --|> Event
-    Split --|> Aggregation
-    Merge --|> Aggregation
-    Consume --|> Aggregation
+package "Extension\n(inspired by EPCIS2.0; 'EPCIS and CBV Implementation Guideline')" <<Rectangle>> {
+    object EPCISEvent
+    EPCISEvent --|> Event
+    object Aggregation {
+        action: string ("ADD" "DELETE")
+        parentEntity: AggregatedEntity
+        childQuantity: Quantity [1..*]
+    }
+    object Object {
+        entity: AggregatedEntity
+        quantity: Quantity [0..*]
+    }
+    object Transformation {
+        inputQuantity: Quantity [1..*]
+        outputQuantity: Quantity [1..*]
+    }
+    Object -u-|> EPCISEvent
+    Aggregation -u-|> EPCISEvent
+    Transformation -u-|> EPCISEvent
 
     object AggregatedEntity
-    AggregatedEntity --|> Entity
+    AggregatedEntity -l-|> Entity
 
     object Quantity {
-        amount : float
-        class : string
+        amount : double
     }
-    Aggregation --> Quantity : inputQuantity
-    Aggregation --> Quantity : outputQuantity
-    Quantity --> AggregatedEntity : fromEntity
+    Object --> Quantity : quantity
+    Aggregation --> Quantity : childQuantity
+    Aggregation --> AggregatedEntity : parentEntity
+    Transformation --> Quantity : inputQuantity
+    Transformation --> Quantity : outputQuantity
+    Quantity --> AggregatedEntity : class
 
-    ' Aggregation --> Aggregation : directlyFollowsAggregation
+    object "EventRelation_AggregatedEntity" as DF_DP #LightYellow {
+        amount: double
+        fraction: decimal
+    }
+    (EPCISEvent, EPCISEvent) . DF_DP
+
+    object "DirectlyFollows" as DF
+    object "DirectlyPrecedes" as DP
+    DF --|> DF_DP
+    DP --|> DF_DP
 }
 @enduml
