@@ -1,49 +1,43 @@
 PREFIX : <http://example.org/def/ekg/aggregated_traces/>
-PREFIX prov: <http://www.w3.org/ns/prov#>
 
+#TODO: distinguish by type of material (contained in the aggregated entity)
 SELECT DISTINCT
   ?event
   ?type
   ?sum_amount_in
-  ?entity_amount_in
+  (replace(?entity_amount_in, str(<>), "") as ?_entity_amount_in)
   ?sum_amount_out
-  ?entity_amount_out
+  (replace(?entity_amount_out, str(<>), "") as ?_entity_amount_out)
   (str(?sum_amount_in=?sum_amount_out) as ?equal)
-  ?class
 WHERE {
-  ?event prov:atTime [] .
+  ?event :timestamp [] .
 
-  { SELECT ?event ?type ?class (sum(xsd:float(strafter(?entity_amount_in, "|"))) as ?sum_amount_in) (group_concat(?entity_amount_in ; separator=", ") as ?entity_amount_in) {
-    { SELECT DISTINCT ?event ?type ?class (concat(?entity, "|", str(?amount_in)) as ?entity_amount_in) {
+  { SELECT ?event ?type (sum(xsd:float(strafter(?entity_amount_in, "|"))) as ?sum_amount_in) (group_concat(?entity_amount_in ; separator=", ") as ?entity_amount_in) {
+    # Pipe separator (https://www.rfc-editor.org/rfc/rfc3986)
+    { SELECT ?event ?type (concat(str(?entity), "|", str(?amount_in)) as ?entity_amount_in) {
       VALUES ?type {
         :DirectlyFollows_AggregatedEntity
         :DirectlyPrecedes_AggregatedEntity
       }
       [] a ?type ;
         :target ?event ;
-        :quantity [
-          :amount ?amount_in ;
-          :class ?class ;
-          :fromEntity/rdfs:label ?entity ;
-        ] .
+        :amount ?amount_in ;
+        :class ?entity .
     }}
-  } GROUP BY ?event ?type ?class }
+  } GROUP BY ?event ?type }
 
-  { SELECT ?event ?type ?class (sum(xsd:float(strafter(?entity_amount_out, "|"))) as ?sum_amount_out) (group_concat(?entity_amount_out ; separator=", ") as ?entity_amount_out) {
-    { SELECT DISTINCT ?event ?type ?class (concat(?entity, "|", str(?amount_out)) as ?entity_amount_out) {
+  { SELECT ?event ?type (sum(xsd:float(strafter(?entity_amount_out, "|"))) as ?sum_amount_out) (group_concat(?entity_amount_out ; separator=", ") as ?entity_amount_out) {
+    { SELECT ?event ?type (concat(str(?entity), "|", str(?amount_out)) as ?entity_amount_out) {
       VALUES ?type {
         :DirectlyFollows_AggregatedEntity
         :DirectlyPrecedes_AggregatedEntity
       }
       [] a ?type ;
         :source ?event ;
-        :quantity [
-          :amount ?amount_out ;
-          :class ?class ;
-          :fromEntity/rdfs:label ?entity ;
-        ] .
+        :amount ?amount_out ;
+        :class ?entity .
     }}
-  } GROUP BY ?event ?type ?class }
+  } GROUP BY ?event ?type }
 }
 GROUP BY ?event ?type
 ORDER BY ?type DESC(?equal)

@@ -5,11 +5,14 @@ SELECT DISTINCT
   ?nodeTarget
   (str(?type) as ?edge_type)
   (coalesce(?_edge_amount, "") as ?edge_amount)
-  (group_concat(distinct concat(str(?_edge_amount), " - ", ?entity_label, " [", ?edge_class, "]"); separator="\n") as ?edge_amountEntityClass)
   (group_concat(distinct concat(
-    coalesce(str(?_edge_amount), ""), " - ",
-    coalesce(?entity_label, ""), " {",
-    coalesce(str(?_edge_fraction), ""), "}"
+    str(?_edge_amount), " - ",
+    ?entity_label
+  ); separator="\n") as ?edge_amountEntity)
+  (group_concat(distinct concat(
+    coalesce(?entity_label, ""), " [",
+    coalesce(str(?_edge_amount), ""), "] {",
+    coalesce(str(round(?_edge_fraction*100)/100), ""), "}" # round to two decimals
   ); separator="\n") as ?edge_amountEntityFraction)
   (coalesce(?_edge_fraction, "") as ?edge_fraction)
 WHERE {
@@ -22,11 +25,8 @@ WHERE {
     :target ?nodeTarget .
   OPTIONAL { ?Relation :fraction ?_edge_fraction }
   OPTIONAL {
-    ?Relation :quantity [
-        :amount ?_edge_amount ;
-        :class ?edge_class ;
-        :fromEntity ?entity ;
-      ] .
+    ?Relation :amount ?_edge_amount ;
+      :class ?entity .
 
     OPTIONAL { ?entity rdfs:label ?_entity_label }
     BIND ( coalesce(?_entity_label, replace(str(?entity), ".+/([a-zA-Z0-9_]+)$", "$1")) as ?entity_label )
