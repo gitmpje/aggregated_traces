@@ -5,14 +5,13 @@ SELECT DISTINCT
   ?node_label
   (group_concat(distinct str(?node_type)) as ?node_types)
   (coalesce(?bizStep, "") as ?node_bizStep)
-  (concat(group_concat(distinct ?entity_label), " @ ", ?location_label, " - ", str(?time)) as ?node_entitiesLocationTime)
+  (concat(group_concat(distinct ?entity_label), coalesce(concat(" @ ", ?location_label), ""), " - ", str(?time)) as ?node_entitiesLocationTime)
 WHERE {
   [] :source|:target ?node .
   ?node a ?node_type ;
     :entity|:parentEntity|:childEntity ?entity ;
     :timestamp ?time .
   OPTIONAL { ?node :bizStep ?bizStep }
-  OPTIONAL { ?node :location ?location }
 
   OPTIONAL { ?node rdfs:label ?_node_label }
   BIND ( coalesce(?_node_label, replace(str(?node), ".+/([a-zA-Z0-9_]+)$", "$1")) as ?node_label )
@@ -20,7 +19,10 @@ WHERE {
   OPTIONAL { ?entity rdfs:label ?_entity_label }
   BIND ( coalesce(?_entity_label, replace(str(?entity), ".+/([a-zA-Z0-9_]+)$", "$1")) as ?entity_label )
 
-  OPTIONAL { ?location rdfs:label ?_location_label }
+  OPTIONAL {
+    ?node :location ?location .
+    OPTIONAL { ?location rdfs:label ?_location_label }
+  }
   BIND ( coalesce(?_location_label, replace(str(?location), ".+/([a-zA-Z0-9_]+)$", "$1")) as ?location_label )
 }
 GROUP BY ?node
