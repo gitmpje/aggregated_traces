@@ -1,0 +1,29 @@
+[tool.poetry]
+name = "aggregated_traces"
+version = "0.0.1"
+authors = [
+  "Mark <m.c.a.v.d.pas@tue.nl>",
+]
+description = "Package for working with Event Knowledge Graphs including aggregated entities"
+readme = "README.md"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+
+[project.urls]
+Homepage = "https://github.com/gitmpje/aggregated_traces"
+Issues = "https://github.com/gitmpje/aggregated_traces/issues"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+rdflib = "^7.0.0"
+networkx = "^3.3"
+
+[tool.poetry.dev-dependencies]
+pytest = "^5.2"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
