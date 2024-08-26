@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 
 from typing import List
 
-def generate_graph_visualization(graph: nx.Graph, base_figure_path: str, edges_backward: List[tuple]=[], edges_forward: List[tuple]=[]):
+def generate_graph_visualization(graph: nx.Graph, base_figure_path: str=None, edges_backward: List[tuple]=[], edges_forward: List[tuple]=[]) -> plt.Figure:
 
     # General settings
     font_size = 20
@@ -26,9 +26,10 @@ def generate_graph_visualization(graph: nx.Graph, base_figure_path: str, edges_b
     # Create figure
     plt.figure(figsize=(100,50))
 
-    # Create layout
+    # Create layout using graphviz (using edges in one direction to get a tree structure)
     edges_df = [(e[0], e[1]) for e in graph.edges.data() if e[2]["type"]=="http://example.org/def/ekg/aggregated_traces/DirectlyFollows"]
     graph_df = nx.edge_subgraph(graph, edges_df)
+
     _pos = nx.drawing.nx_agraph.graphviz_layout(graph_df, prog="dot")
 
     # Add nodes
@@ -104,7 +105,10 @@ def generate_graph_visualization(graph: nx.Graph, base_figure_path: str, edges_b
         "svg.fonttype": "none"
     })
 
-    if edges_backward or edges_forward:
-        plt.savefig(f"{base_figure_path}_paths.svg")
-    else:
-        plt.savefig(f"{base_figure_path}.svg")
+    if base_figure_path:
+        if edges_backward or edges_forward:
+            plt.savefig(f"{base_figure_path}_paths.svg")
+        else:
+            plt.savefig(f"{base_figure_path}.svg")
+
+    return fig

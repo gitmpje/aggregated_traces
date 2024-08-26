@@ -1,0 +1,33 @@
+PREFIX : <http://example.org/def/ekg/aggregated_traces/>
+PREFIX prov: <http://www.w3.org/ns/prov#>
+
+SELECT DISTINCT
+    ?g
+    ?entity_source
+    ?node_source
+    ?entity_target
+    ?node_target
+    (?intersection_size/?source_size as ?validation_fraction)
+WHERE {
+    ?node_source :parentEntity ?entity_source .
+
+    # Use graph context to only traverse edges in one direction (DirectlyFollows or DirectlyPrecedes) 
+    GRAPH ?g { ?node_source (^:source/:target)+ ?node_target }
+
+    ?node_target :bizStep "departing" ;
+        :location ?entity_target .
+
+    # Exclude aggregated entities
+    MINUS { ?entity_target a :AggregatedEntity }
+
+    # Exclude nodes without common devices (empty intersection set)
+    { SELECT DISTINCT ?node_target ?node_source (count(distinct ?device) as ?intersection_size) {
+        ?node_source :device ?device .
+        ?node_target :device ?device .
+    } GROUP BY ?node_target ?node_source }
+
+    { SELECT DISTINCT ?node_source (count(distinct ?device) as ?source_size) {
+        ?node_source :device ?device .
+    } GROUP BY ?node_source}
+}
+ORDER BY ?time
