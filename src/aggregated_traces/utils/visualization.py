@@ -3,38 +3,52 @@ import matplotlib.pyplot as plt
 
 from typing import List
 
-def generate_graph_visualization(graph: nx.Graph, base_figure_path: str=None, edges_backward: List[tuple]=[], edges_forward: List[tuple]=[]) -> plt.Figure:
 
+def generate_graph_visualization(
+    graph: nx.Graph,
+    base_figure_path: str = None,
+    edges_backward: List[tuple] = [],
+    edges_forward: List[tuple] = [],
+) -> plt.Figure:
     # General settings
     font_size = 20
     node_size = 800
-    arrowsize = node_size/20
+    arrowsize = node_size / 20
     arc_rad = 0.25
     edge_width = 1
 
     node_label_key = "entitiesLocationTime"
     edge_label_key = "amountEntityFraction"
 
-    node_linewidth_dict = {
-        "packing": 2
-    }
+    node_linewidth_dict = {"packing": 2}
     # edge_style_dict = {}
     node_color_dict = {
         "http://example.org/def/ekg/aggregated_traces/Aggregation": "orange"
     }
 
     # Create figure
-    plt.figure(figsize=(100,50))
+    plt.figure(figsize=(100, 50))
 
     # Create layout using graphviz (using edges in one direction to get a tree structure)
-    edges_df = [(e[0], e[1]) for e in graph.edges.data() if e[2]["type"]=="http://example.org/def/ekg/aggregated_traces/DirectlyFollows"]
+    edges_df = [
+        (e[0], e[1])
+        for e in graph.edges.data()
+        if e[2]["type"]
+        == "http://example.org/def/ekg/aggregated_traces/DirectlyFollows"
+    ]
     graph_df = nx.edge_subgraph(graph, edges_df)
 
     _pos = nx.drawing.nx_agraph.graphviz_layout(graph_df, prog="dot")
 
     # Add nodes
-    node_colors = [node_color_dict.get(o, "white") for o in nx.get_node_attributes(graph, "types").values()]
-    node_linewidths = [node_linewidth_dict.get(v, 1) for v in nx.get_node_attributes(graph, "bizStep").values()]
+    node_colors = [
+        node_color_dict.get(o, "white")
+        for o in nx.get_node_attributes(graph, "types").values()
+    ]
+    node_linewidths = [
+        node_linewidth_dict.get(v, 1)
+        for v in nx.get_node_attributes(graph, "bizStep").values()
+    ]
     fig = nx.draw_networkx_nodes(
         graph,
         pos=_pos,
@@ -42,16 +56,18 @@ def generate_graph_visualization(graph: nx.Graph, base_figure_path: str=None, ed
         node_size=node_size,
         node_color=node_colors,
         linewidths=node_linewidths,
-        edgecolors=["black"]*len(graph.nodes())
+        edgecolors=["black"] * len(graph.nodes()),
     )
 
-    node_labels = {n: f"{d['label']}: {d[node_label_key]}" for n,d in graph.nodes(data=True)}
+    node_labels = {
+        n: f"{d['label']}: {d[node_label_key]}" for n, d in graph.nodes(data=True)
+    }
     fig = nx.draw_networkx_labels(
         graph,
         pos=_pos,
         labels=node_labels,
         verticalalignment="top",
-        font_size=font_size
+        font_size=font_size,
     )
 
     # Add edges
@@ -62,7 +78,7 @@ def generate_graph_visualization(graph: nx.Graph, base_figure_path: str=None, ed
         node_size=node_size,
         width=edge_width,
         arrowsize=arrowsize,
-        connectionstyle=f"arc3, rad = {arc_rad}"
+        connectionstyle=f"arc3, rad = {arc_rad}",
     )
 
     # Color edges on paths
@@ -72,8 +88,8 @@ def generate_graph_visualization(graph: nx.Graph, base_figure_path: str=None, ed
         edgelist=edges_backward,
         node_size=node_size,
         edge_color="red",
-        width=edge_width*4,
-        connectionstyle=f"arc3, rad = {arc_rad}"
+        width=edge_width * 4,
+        connectionstyle=f"arc3, rad = {arc_rad}",
     )
     fig = nx.draw_networkx_edges(
         graph,
@@ -81,16 +97,26 @@ def generate_graph_visualization(graph: nx.Graph, base_figure_path: str=None, ed
         edgelist=edges_forward,
         node_size=node_size,
         edge_color="orange",
-        width=edge_width*4,
-        connectionstyle=f"arc3, rad = {arc_rad}"
+        width=edge_width * 4,
+        connectionstyle=f"arc3, rad = {arc_rad}",
     )
 
     edge_labels = dict()
     for u, v, d in graph.edges(data=True):
         if _pos[u][0] > _pos[v][0]:
-            edge_labels[(u, v,)] = f"{d[edge_label_key]}\n\n{graph.edges[(v,u)][edge_label_key]}"
+            edge_labels[
+                (
+                    u,
+                    v,
+                )
+            ] = f"{d[edge_label_key]}\n\n{graph.edges[(v,u)][edge_label_key]}"
         elif _pos[u][1] < _pos[v][1]:
-            edge_labels[(u, v,)] = f"{graph.edges[(v,u)][edge_label_key]}\n\n{d[edge_label_key]}"
+            edge_labels[
+                (
+                    u,
+                    v,
+                )
+            ] = f"{graph.edges[(v,u)][edge_label_key]}\n\n{d[edge_label_key]}"
 
     fig = nx.draw_networkx_edge_labels(
         graph,
@@ -100,10 +126,7 @@ def generate_graph_visualization(graph: nx.Graph, base_figure_path: str=None, ed
         # rotate=False
     )
 
-    plt.rcParams.update({
-        "text.usetex": False,
-        "svg.fonttype": "none"
-    })
+    plt.rcParams.update({"text.usetex": False, "svg.fonttype": "none"})
 
     if base_figure_path:
         if edges_backward or edges_forward:

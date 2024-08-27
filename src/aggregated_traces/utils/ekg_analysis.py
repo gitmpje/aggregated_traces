@@ -10,7 +10,7 @@ path_queries = Path(__file__).parent.parent.joinpath("sparql")
 EKG_ID = Namespace("http://example.org/id/ekg/aggregated_traces/")
 EDGE_TYPE_MAPPING = {
     "urn:ekg:directlyFollows": "http://example.org/def/ekg/aggregated_traces/DirectlyFollows",
-    "urn:ekg:directlyPrecedes": "http://example.org/def/ekg/aggregated_traces/DirectlyPrecedes" 
+    "urn:ekg:directlyPrecedes": "http://example.org/def/ekg/aggregated_traces/DirectlyPrecedes",
 }
 
 
@@ -23,7 +23,14 @@ def remove_subsets(lists: List[list]) -> List[list]:
                 lists.remove(l1)
     return lists
 
-def compute_trace_probabilities(rdf_trace_graph: Graph, nx_trace_graph: DiGraph, source_entities: List[str]=[], trace_backward: bool=True, custom_target_query: str=None) -> Tuple[DataFrame, List[Tuple[str]]]:
+
+def compute_trace_probabilities(
+    rdf_trace_graph: Graph,
+    nx_trace_graph: DiGraph,
+    source_entities: List[str] = [],
+    trace_backward: bool = True,
+    custom_target_query: str = None,
+) -> Tuple[DataFrame, List[Tuple[str]]]:
     """
     `custom_target_query`: should return at least variables `node_source`, `node_target`, and `g` [<urn:ekg:directlyFollows>, <urn:ekg:directlyPrecedes>]
     Either `source_entities` or `custom_target_query` is expected to specified for the function to work properly.
@@ -31,7 +38,11 @@ def compute_trace_probabilities(rdf_trace_graph: Graph, nx_trace_graph: DiGraph,
 
     # Load SPARQL query
     if not custom_target_query:
-        query_file = "get_target_nodes_backward.rq" if trace_backward else "get_target_nodes_forward.rq"
+        query_file = (
+            "get_target_nodes_backward.rq"
+            if trace_backward
+            else "get_target_nodes_forward.rq"
+        )
         with open(path_queries.joinpath(query_file)) as f:
             target_query = f.read()
 
@@ -50,10 +61,25 @@ def compute_trace_probabilities(rdf_trace_graph: Graph, nx_trace_graph: DiGraph,
     all_paths_edges = []
     for b in query_result.bindings:
         p = 0
-        trace_graph_selected = nx_trace_graph.edge_subgraph([(u,v) for u,v,d in nx_trace_graph.edges(data=True) if d["type"]==EDGE_TYPE_MAPPING[b[Variable("g")].toPython()]])
+        trace_graph_selected = nx_trace_graph.edge_subgraph(
+            [
+                (u, v)
+                for u, v, d in nx_trace_graph.edges(data=True)
+                if d["type"] == EDGE_TYPE_MAPPING[b[Variable("g")].toPython()]
+            ]
+        )
 
         # Remove completely overlapping paths
-        paths = remove_subsets([p for p in all_simple_paths(trace_graph_selected, source=b[Variable("node_source")], target=b[Variable("node_target")])])
+        paths = remove_subsets(
+            [
+                p
+                for p in all_simple_paths(
+                    trace_graph_selected,
+                    source=b[Variable("node_source")],
+                    target=b[Variable("node_target")],
+                )
+            ]
+        )
         for path in paths:
             # print([n.toPython().split("/")[-1] for n in path])
             path_graph_ = path_graph(path)
@@ -75,9 +101,12 @@ def compute_trace_probabilities(rdf_trace_graph: Graph, nx_trace_graph: DiGraph,
                 "node_source": b[Variable("node_source")],
                 "entity_target": b.get(Variable("entity_target")),
                 "node_target": b[Variable("node_target")],
-                "validation_fraction": b.get(Variable("validation_fraction")).toPython(),
-                "probability": p
-            })
+                "validation_fraction": b.get(
+                    Variable("validation_fraction")
+                ).toPython(),
+                "probability": p,
+            }
+        )
 
     # Construct DataFrame
     df = DataFrame(records)
