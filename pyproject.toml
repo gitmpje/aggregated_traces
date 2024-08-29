@@ -19,14 +19,13 @@ Issues = "https://github.com/gitmpje/aggregated_traces/issues"
 [tool.poetry.dependencies]
 python = "^3.11"
 networkx = "^3.3"
-networkx = "^3.3"
 matplotlib = "^3.9"
 pandas = "^2.2"
 pygraphviz = "^1.13"
 rdflib = "^7.0.0"
 
 [tool.poetry.dev-dependencies]
-pytest = "^5.2"
+pytest = "^8.3"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

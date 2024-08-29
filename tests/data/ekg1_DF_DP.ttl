@@ -1,0 +1,225 @@
+@prefix : <http://example.org/def/ekg/aggregated_traces/> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<http://example.org/id/ekg/aggregated_traces/20> a :Object ;
+    :bizStep "arriving" ;
+    :device <http://example.org/id/ekg/aggregated_traces/Lot0_Device0>,
+        <http://example.org/id/ekg/aggregated_traces/Lot0_Device1>,
+        <http://example.org/id/ekg/aggregated_traces/Lot0_Device2> ;
+    :entity <http://example.org/id/ekg/aggregated_traces/Lot0> ;
+    :location <http://example.org/id/ekg/aggregated_traces/DB1> ;
+    :quantity <http://example.org/id/ekg/aggregated_traces/20/quantity> ;
+    :timestamp 9.050268e-02 .
+
+<http://example.org/id/ekg/aggregated_traces/20/quantity> :amount 3 ;
+    :class <http://example.org/id/ekg/aggregated_traces/Lot0> .
+
+<http://example.org/id/ekg/aggregated_traces/24> a :Object ;
+    :bizStep "departing" ;
+    :device <http://example.org/id/ekg/aggregated_traces/Lot0_Device0>,
+        <http://example.org/id/ekg/aggregated_traces/Lot0_Device1>,
+        <http://example.org/id/ekg/aggregated_traces/Lot0_Device2> ;
+    :entity <http://example.org/id/ekg/aggregated_traces/Lot0> ;
+    :location <http://example.org/id/ekg/aggregated_traces/DB1> ;
+    :quantity <http://example.org/id/ekg/aggregated_traces/24/quantity> ;
+    :timestamp 7.410656e-01 .
+
+<http://example.org/id/ekg/aggregated_traces/24/quantity> :amount 3 ;
+    :class <http://example.org/id/ekg/aggregated_traces/Lot0> .
+
+<http://example.org/id/ekg/aggregated_traces/34> a :Aggregation ;
+    :action "DELETE" ;
+    :childEntity <http://example.org/id/ekg/aggregated_traces/Lot0_0>,
+        <http://example.org/id/ekg/aggregated_traces/Lot0_1> ;
+    :childQuantity <http://example.org/id/ekg/aggregated_traces/34/quantity1>,
+        <http://example.org/id/ekg/aggregated_traces/34/quantity2> ;
+    :parentEntity <http://example.org/id/ekg/aggregated_traces/Lot0> ;
+    :timestamp 8.410656e-01 .
+
+<http://example.org/id/ekg/aggregated_traces/34/quantity1> :amount 2 ;
+    :class <http://example.org/id/ekg/aggregated_traces/Lot0_0> .
+
+<http://example.org/id/ekg/aggregated_traces/34/quantity2> :amount 1 ;
+    :class <http://example.org/id/ekg/aggregated_traces/Lot0_1> .
+
+<http://example.org/id/ekg/aggregated_traces/58> a :Object ;
+    :bizStep "arriving" ;
+    :device <http://example.org/id/ekg/aggregated_traces/Lot0_Device0>,
+        <http://example.org/id/ekg/aggregated_traces/Lot0_Device1> ;
+    :entity <http://example.org/id/ekg/aggregated_traces/Lot0_0> ;
+    :location <http://example.org/id/ekg/aggregated_traces/WB1> ;
+    :quantity <http://example.org/id/ekg/aggregated_traces/58/quantity> ;
+    :timestamp 2.558738e+00 .
+
+<http://example.org/id/ekg/aggregated_traces/58/quantity> :amount 2 ;
+    :class <http://example.org/id/ekg/aggregated_traces/Lot0_0> .
+
+<http://example.org/id/ekg/aggregated_traces/59> a :Object ;
+    :bizStep "arriving" ;
+    :device <http://example.org/id/ekg/aggregated_traces/Lot0_Device2> ;
+    :entity <http://example.org/id/ekg/aggregated_traces/Lot0_1> ;
+    :location <http://example.org/id/ekg/aggregated_traces/WB2> ;
+    :quantity <http://example.org/id/ekg/aggregated_traces/59/quantity> ;
+    :timestamp 1.539659e+00 .
+
+<http://example.org/id/ekg/aggregated_traces/59/quantity> :amount 1 ;
+    :class <http://example.org/id/ekg/aggregated_traces/Lot0_1> .
+
+<http://example.org/id/ekg/aggregated_traces/72> a :Object ;
+    :bizStep "departing" ;
+    :device <http://example.org/id/ekg/aggregated_traces/Lot0_Device2> ;
+    :entity <http://example.org/id/ekg/aggregated_traces/Lot0_1> ;
+    :location <http://example.org/id/ekg/aggregated_traces/WB2> ;
+    :quantity <http://example.org/id/ekg/aggregated_traces/72/quantity> ;
+    :timestamp 2.884741e+00 .
+
+<http://example.org/id/ekg/aggregated_traces/72/quantity> :amount 1 ;
+    :class <http://example.org/id/ekg/aggregated_traces/Lot0_1> .
+
+<http://example.org/id/ekg/aggregated_traces/75> a :Object ;
+    :bizStep "departing" ;
+    :device <http://example.org/id/ekg/aggregated_traces/Lot0_Device0>,
+        <http://example.org/id/ekg/aggregated_traces/Lot0_Device1> ;
+    :entity <http://example.org/id/ekg/aggregated_traces/Lot0_0> ;
+    :location <http://example.org/id/ekg/aggregated_traces/WB1> ;
+    :quantity <http://example.org/id/ekg/aggregated_traces/75/quantity> ;
+    :timestamp 2.649328e+00 .
+
+<http://example.org/id/ekg/aggregated_traces/75/quantity> :amount 2 ;
+    :class <http://example.org/id/ekg/aggregated_traces/Lot0_0> .
+
+<http://example.org/id/ekg/aggregated_traces/86> a :Aggregation ;
+    :action "ADD" ;
+    :bizStep "packing" ;
+    :childEntity <http://example.org/id/ekg/aggregated_traces/Lot0_0> ;
+    :childQuantity <http://example.org/id/ekg/aggregated_traces/86/quantity> ;
+    :device <http://example.org/id/ekg/aggregated_traces/Lot0_Device0>,
+        <http://example.org/id/ekg/aggregated_traces/Lot0_Device1> ;
+    :parentEntity <http://example.org/id/ekg/aggregated_traces/Lot0_0_Pack0> ;
+    :timestamp 2.749328e+00 .
+
+<http://example.org/id/ekg/aggregated_traces/86/quantity> :amount 2 ;
+    :class <http://example.org/id/ekg/aggregated_traces/Lot0_0> .
+
+<http://example.org/id/ekg/aggregated_traces/Lot0> a :AggregatedEntity ;
+    rdfs:label "Lot0" .
+
+<http://example.org/id/ekg/aggregated_traces/Lot0_0> a :AggregatedEntity ;
+    rdfs:label "Lot0_0" .
+
+<http://example.org/id/ekg/aggregated_traces/Lot0_1> a :AggregatedEntity ;
+    rdfs:label "Lot0_1" .
+
+<http://example.org/id/ekg/aggregated_traces/Lot0_0_Pack0> a :AggregatedEntity ;
+    rdfs:label "Lot0_0_Pack0" .
+
+<http://example.org/id/ekg/aggregated_traces/Lot0> a :AggregatedEntity ;
+    rdfs:label "Lot0" .
+
+<http://example.org/id/ekg/aggregated_traces/Lot0_0> a :AggregatedEntity ;
+    rdfs:label "Lot0_0" .
+
+<http://example.org/id/ekg/aggregated_traces/Lot0_1> a :AggregatedEntity ;
+    rdfs:label "Lot0_1" .
+
+<http://example.org/id/ekg/aggregated_traces/Lot0_0_Pack0> a :AggregatedEntity ;
+    rdfs:label "Lot0_0_Pack0" .
+
+<http://example.org/id/aggregated_traces/471bcf01a27f66da7d8b344de97bf59d> a :DirectlyFollows,
+        :DirectlyFollows_AggregatedEntity ;
+    :amount 3 ;
+    :class <http://example.org/id/ekg/aggregated_traces/Lot0> ;
+    :source <http://example.org/id/ekg/aggregated_traces/20> ;
+    :target <http://example.org/id/ekg/aggregated_traces/24> .
+
+<http://example.org/id/aggregated_traces/6b27dbc84bc380a930c5a15b030a75a7> a :DirectlyFollows,
+        :DirectlyFollows_AggregatedEntity ;
+    :amount 3 ;
+    :class <http://example.org/id/ekg/aggregated_traces/Lot0> ;
+    :source <http://example.org/id/ekg/aggregated_traces/24> ;
+    :target <http://example.org/id/ekg/aggregated_traces/34> .
+
+<http://example.org/id/aggregated_traces/9e11f629acd9d5732a79cba5024c56be> a :DirectlyFollows,
+        :DirectlyFollows_AggregatedEntity ;
+    :amount 1 ;
+    :class <http://example.org/id/ekg/aggregated_traces/Lot0_1> ;
+    :source <http://example.org/id/ekg/aggregated_traces/34> ;
+    :target <http://example.org/id/ekg/aggregated_traces/59> .
+
+<http://example.org/id/aggregated_traces/0451ec3cf813866b70cea3dd93bdaea5> a :DirectlyFollows,
+        :DirectlyFollows_AggregatedEntity ;
+    :amount 1 ;
+    :class <http://example.org/id/ekg/aggregated_traces/Lot0_1> ;
+    :source <http://example.org/id/ekg/aggregated_traces/59> ;
+    :target <http://example.org/id/ekg/aggregated_traces/72> .
+
+<http://example.org/id/aggregated_traces/6cf0df0465fc5c7198e096936b4a266d> a :DirectlyFollows,
+        :DirectlyFollows_AggregatedEntity ;
+    :amount 2 ;
+    :class <http://example.org/id/ekg/aggregated_traces/Lot0_0> ;
+    :source <http://example.org/id/ekg/aggregated_traces/34> ;
+    :target <http://example.org/id/ekg/aggregated_traces/58> .
+
+<http://example.org/id/aggregated_traces/31b4e36c179db1dc83f6e3ddb362b017> a :DirectlyFollows,
+        :DirectlyFollows_AggregatedEntity ;
+    :amount 2 ;
+    :class <http://example.org/id/ekg/aggregated_traces/Lot0_0> ;
+    :source <http://example.org/id/ekg/aggregated_traces/58> ;
+    :target <http://example.org/id/ekg/aggregated_traces/75> .
+
+<http://example.org/id/aggregated_traces/c6cf46f794fbf04f167d255f7c0e0171> a :DirectlyFollows,
+        :DirectlyFollows_AggregatedEntity ;
+    :amount 2 ;
+    :class <http://example.org/id/ekg/aggregated_traces/Lot0_0> ;
+    :source <http://example.org/id/ekg/aggregated_traces/75> ;
+    :target <http://example.org/id/ekg/aggregated_traces/86> .
+
+<http://example.org/id/aggregated_traces/d97190f3bb2d103c5d6029fba6ba6968> a :DirectlyPrecedes,
+        :DirectlyPrecedes_AggregatedEntity ;
+    :amount 2 ;
+    :class <http://example.org/id/ekg/aggregated_traces/Lot0_0> ;
+    :source <http://example.org/id/ekg/aggregated_traces/86> ;
+    :target <http://example.org/id/ekg/aggregated_traces/75> .
+
+<http://example.org/id/aggregated_traces/b76f7fe492294df77c588b48bd52a3e5> a :DirectlyPrecedes,
+        :DirectlyPrecedes_AggregatedEntity ;
+    :amount 2 ;
+    :class <http://example.org/id/ekg/aggregated_traces/Lot0_0> ;
+    :source <http://example.org/id/ekg/aggregated_traces/75> ;
+    :target <http://example.org/id/ekg/aggregated_traces/58> .
+
+<http://example.org/id/aggregated_traces/f26186422437236939c8b443e1edddb4> a :DirectlyPrecedes,
+        :DirectlyPrecedes_AggregatedEntity ;
+    :amount 2 ;
+    :class <http://example.org/id/ekg/aggregated_traces/Lot0_0> ;
+    :source <http://example.org/id/ekg/aggregated_traces/58> ;
+    :target <http://example.org/id/ekg/aggregated_traces/34> .
+
+<http://example.org/id/aggregated_traces/dcef9c98a8f18c034b30f0c265fd68f6> a :DirectlyPrecedes,
+        :DirectlyPrecedes_AggregatedEntity ;
+    :amount 1 ;
+    :class <http://example.org/id/ekg/aggregated_traces/Lot0_1> ;
+    :source <http://example.org/id/ekg/aggregated_traces/72> ;
+    :target <http://example.org/id/ekg/aggregated_traces/59> .
+
+<http://example.org/id/aggregated_traces/751cebb0ab515350bad64de832eab481> a :DirectlyPrecedes,
+        :DirectlyPrecedes_AggregatedEntity ;
+    :amount 1 ;
+    :class <http://example.org/id/ekg/aggregated_traces/Lot0_1> ;
+    :source <http://example.org/id/ekg/aggregated_traces/59> ;
+    :target <http://example.org/id/ekg/aggregated_traces/34> .
+
+<http://example.org/id/aggregated_traces/fcf232e8488c459bd91b38a288129b6f> a :DirectlyPrecedes,
+        :DirectlyPrecedes_AggregatedEntity ;
+    :amount 3 ;
+    :class <http://example.org/id/ekg/aggregated_traces/Lot0> ;
+    :source <http://example.org/id/ekg/aggregated_traces/34> ;
+    :target <http://example.org/id/ekg/aggregated_traces/24> .
+
+<http://example.org/id/aggregated_traces/d2e865aa66a38f453fc94027c598a532> a :DirectlyPrecedes,
+        :DirectlyPrecedes_AggregatedEntity ;
+    :amount 3 ;
+    :class <http://example.org/id/ekg/aggregated_traces/Lot0> ;
+    :source <http://example.org/id/ekg/aggregated_traces/24> ;
+    :target <http://example.org/id/ekg/aggregated_traces/20> .
