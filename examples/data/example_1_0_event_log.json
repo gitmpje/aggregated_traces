@@ -74,8 +74,30 @@
       ]
     },
     {
-      "eventIdentifier": "34",
-      "timestamp": 5.2929561634265685,
+      "eventIdentifier": "28",
+      "timestamp": 5.193956163426569,
+      "eventType": "Transformation",
+      "bizStep": "assembling",
+      "location": "DB1",
+      "inputQuantity": [
+        {
+          "amount": 3,
+          "class": "Lot0"
+        }
+      ],
+      "outputQuantity": {
+        "amount": 3,
+        "class": "Lot0"
+      },
+      "_devices": [
+        "Lot0_Device0",
+        "Lot0_Device1",
+        "Lot0_Device2"
+      ]
+    },
+    {
+      "eventIdentifier": "35",
+      "timestamp": 5.293956163426569,
       "eventType": "Aggregation",
       "action": "DELETE",
       "parentEntity": "Lot0",
@@ -96,8 +118,8 @@
       "_devices": []
     },
     {
-      "eventIdentifier": "32",
-      "timestamp": 5.739462914757802,
+      "eventIdentifier": "33",
+      "timestamp": 5.740462914757802,
       "eventType": "Object",
       "bizStep": "arriving",
       "entity": "Lot2",
@@ -113,13 +135,35 @@
       ]
     },
     {
-      "eventIdentifier": "51",
-      "timestamp": 5.770252876153981,
+      "eventIdentifier": "52",
+      "timestamp": 5.771252876153981,
       "eventType": "Object",
       "bizStep": "departing",
       "entity": "Lot2",
       "location": "DB1",
       "quantity": {
+        "amount": 3,
+        "class": "Lot2"
+      },
+      "_devices": [
+        "Lot2_Device0",
+        "Lot2_Device1",
+        "Lot2_Device2"
+      ]
+    },
+    {
+      "eventIdentifier": "56",
+      "timestamp": 5.772252876153981,
+      "eventType": "Transformation",
+      "bizStep": "assembling",
+      "location": "DB1",
+      "inputQuantity": [
+        {
+          "amount": 3,
+          "class": "Lot2"
+        }
+      ],
+      "outputQuantity": {
         "amount": 3,
         "class": "Lot2"
       },
@@ -147,8 +191,8 @@
       ]
     },
     {
-      "eventIdentifier": "59",
-      "timestamp": 5.87025287615398,
+      "eventIdentifier": "61",
+      "timestamp": 5.872252876153981,
       "eventType": "Aggregation",
       "action": "DELETE",
       "parentEntity": "Lot2",
@@ -169,8 +213,8 @@
       "_devices": []
     },
     {
-      "eventIdentifier": "48",
-      "timestamp": 6.4289411820286,
+      "eventIdentifier": "49",
+      "timestamp": 6.4299411820286,
       "eventType": "Object",
       "bizStep": "arriving",
       "entity": "Lot0_0",
@@ -185,8 +229,8 @@
       ]
     },
     {
-      "eventIdentifier": "75",
-      "timestamp": 6.734110252885599,
+      "eventIdentifier": "77",
+      "timestamp": 6.735110252885598,
       "eventType": "Object",
       "bizStep": "departing",
       "entity": "Lot0_0",
@@ -201,7 +245,28 @@
       ]
     },
     {
-      "eventIdentifier": "61",
+      "eventIdentifier": "81",
+      "timestamp": 6.736110252885599,
+      "eventType": "Transformation",
+      "bizStep": "assembling",
+      "location": "WB1",
+      "inputQuantity": [
+        {
+          "amount": 2,
+          "class": "Lot0_0"
+        }
+      ],
+      "outputQuantity": {
+        "amount": 2,
+        "class": "Lot0_0"
+      },
+      "_devices": [
+        "Lot0_Device2",
+        "Lot0_Device1"
+      ]
+    },
+    {
+      "eventIdentifier": "63",
       "timestamp": 6.768766337657034,
       "eventType": "Object",
       "bizStep": "departing",
@@ -218,8 +283,30 @@
       ]
     },
     {
-      "eventIdentifier": "86",
-      "timestamp": 6.834110252885599,
+      "eventIdentifier": "92",
+      "timestamp": 6.7697663376570345,
+      "eventType": "Transformation",
+      "bizStep": "assembling",
+      "location": "DB2",
+      "inputQuantity": [
+        {
+          "amount": 3,
+          "class": "Lot1"
+        }
+      ],
+      "outputQuantity": {
+        "amount": 3,
+        "class": "Lot1"
+      },
+      "_devices": [
+        "Lot1_Device0",
+        "Lot1_Device1",
+        "Lot1_Device2"
+      ]
+    },
+    {
+      "eventIdentifier": "89",
+      "timestamp": 6.836110252885598,
       "eventType": "Aggregation",
       "action": "ADD",
       "bizStep": "packing",
@@ -239,8 +326,8 @@
       ]
     },
     {
-      "eventIdentifier": "93",
-      "timestamp": 6.868766337657034,
+      "eventIdentifier": "97",
+      "timestamp": 6.869766337657034,
       "eventType": "Aggregation",
       "action": "DELETE",
       "parentEntity": "Lot1",
@@ -261,8 +348,8 @@
       "_devices": []
     },
     {
-      "eventIdentifier": "49",
-      "timestamp": 9.012398635790086,
+      "eventIdentifier": "50",
+      "timestamp": 9.013398635790086,
       "eventType": "Object",
       "bizStep": "arriving",
       "entity": "Lot0_1",
@@ -276,8 +363,8 @@
       ]
     },
     {
-      "eventIdentifier": "106",
-      "timestamp": 9.87074369949134,
+      "eventIdentifier": "110",
+      "timestamp": 9.87174369949134,
       "eventType": "Object",
       "bizStep": "departing",
       "entity": "Lot0_1",
@@ -292,7 +379,27 @@
     },
     {
       "eventIdentifier": "114",
-      "timestamp": 10.149047737815932,
+      "timestamp": 9.87274369949134,
+      "eventType": "Transformation",
+      "bizStep": "assembling",
+      "location": "WB2",
+      "inputQuantity": [
+        {
+          "amount": 1,
+          "class": "Lot0_1"
+        }
+      ],
+      "outputQuantity": {
+        "amount": 1,
+        "class": "Lot0_1"
+      },
+      "_devices": [
+        "Lot0_Device0"
+      ]
+    },
+    {
+      "eventIdentifier": "119",
+      "timestamp": 10.151047737815931,
       "eventType": "Object",
       "bizStep": "arriving",
       "entity": "Lot2_1",
@@ -306,8 +413,8 @@
       ]
     },
     {
-      "eventIdentifier": "83",
-      "timestamp": 11.789751611073704,
+      "eventIdentifier": "86",
+      "timestamp": 11.791751611073705,
       "eventType": "Object",
       "bizStep": "arriving",
       "entity": "Lot2_0",
@@ -322,8 +429,8 @@
       ]
     },
     {
-      "eventIdentifier": "127",
-      "timestamp": 12.474312072411388,
+      "eventIdentifier": "132",
+      "timestamp": 12.476312072411387,
       "eventType": "Object",
       "bizStep": "departing",
       "entity": "Lot2_1",
@@ -338,7 +445,27 @@
     },
     {
       "eventIdentifier": "136",
-      "timestamp": 12.574312072411388,
+      "timestamp": 12.477312072411387,
+      "eventType": "Transformation",
+      "bizStep": "assembling",
+      "location": "WB2",
+      "inputQuantity": [
+        {
+          "amount": 1,
+          "class": "Lot2_1"
+        }
+      ],
+      "outputQuantity": {
+        "amount": 1,
+        "class": "Lot2_1"
+      },
+      "_devices": [
+        "Lot2_Device1"
+      ]
+    },
+    {
+      "eventIdentifier": "142",
+      "timestamp": 12.577312072411386,
       "eventType": "Aggregation",
       "action": "ADD",
       "bizStep": "packing",
@@ -363,8 +490,8 @@
       ]
     },
     {
-      "eventIdentifier": "124",
-      "timestamp": 13.512330759967945,
+      "eventIdentifier": "129",
+      "timestamp": 13.514330759967947,
       "eventType": "Object",
       "bizStep": "departing",
       "entity": "Lot2_0",
@@ -379,8 +506,29 @@
       ]
     },
     {
-      "eventIdentifier": "146",
-      "timestamp": 13.612330759967945,
+      "eventIdentifier": "145",
+      "timestamp": 13.515330759967947,
+      "eventType": "Transformation",
+      "bizStep": "assembling",
+      "location": "WB1",
+      "inputQuantity": [
+        {
+          "amount": 2,
+          "class": "Lot2_0"
+        }
+      ],
+      "outputQuantity": {
+        "amount": 2,
+        "class": "Lot2_0"
+      },
+      "_devices": [
+        "Lot2_Device0",
+        "Lot2_Device2"
+      ]
+    },
+    {
+      "eventIdentifier": "153",
+      "timestamp": 13.615330759967947,
       "eventType": "Aggregation",
       "action": "ADD",
       "bizStep": "packing",
@@ -400,8 +548,8 @@
       ]
     },
     {
-      "eventIdentifier": "143",
-      "timestamp": 14.60991391152939,
+      "eventIdentifier": "150",
+      "timestamp": 14.612913911529391,
       "eventType": "Object",
       "bizStep": "arriving",
       "entity": "Lot1_0",
@@ -416,8 +564,8 @@
       ]
     },
     {
-      "eventIdentifier": "148",
-      "timestamp": 16.226365277397903,
+      "eventIdentifier": "155",
+      "timestamp": 16.229365277397903,
       "eventType": "Object",
       "bizStep": "departing",
       "entity": "Lot1_0",
@@ -433,7 +581,28 @@
     },
     {
       "eventIdentifier": "159",
-      "timestamp": 16.326365277397905,
+      "timestamp": 16.230365277397905,
+      "eventType": "Transformation",
+      "bizStep": "assembling",
+      "location": "WB1",
+      "inputQuantity": [
+        {
+          "amount": 2,
+          "class": "Lot1_0"
+        }
+      ],
+      "outputQuantity": {
+        "amount": 2,
+        "class": "Lot1_0"
+      },
+      "_devices": [
+        "Lot1_Device2",
+        "Lot1_Device1"
+      ]
+    },
+    {
+      "eventIdentifier": "167",
+      "timestamp": 16.330365277397906,
       "eventType": "Aggregation",
       "action": "ADD",
       "bizStep": "packing",
@@ -453,8 +622,8 @@
       ]
     },
     {
-      "eventIdentifier": "156",
-      "timestamp": 19.738273437310323,
+      "eventIdentifier": "164",
+      "timestamp": 19.742273437310324,
       "eventType": "Object",
       "bizStep": "arriving",
       "entity": "Lot1_1",
@@ -468,8 +637,8 @@
       ]
     },
     {
-      "eventIdentifier": "161",
-      "timestamp": 20.83091442138827,
+      "eventIdentifier": "169",
+      "timestamp": 20.834914421388273,
       "eventType": "Object",
       "bizStep": "departing",
       "entity": "Lot1_1",
@@ -481,23 +650,33 @@
       "_devices": [
         "Lot1_Device0"
       ]
+    },
+    {
+      "eventIdentifier": "173",
+      "timestamp": 20.835914421388274,
+      "eventType": "Transformation",
+      "bizStep": "assembling",
+      "location": "WB1",
+      "inputQuantity": [
+        {
+          "amount": 1,
+          "class": "Lot1_1"
+        }
+      ],
+      "outputQuantity": {
+        "amount": 1,
+        "class": "Lot1_1"
+      },
+      "_devices": [
+        "Lot1_Device0"
+      ]
     }
   ],
   "entities": [
     {
       "@type": "AggregatedEntity",
-      "identifier": "Lot1_0",
-      "rdfs:label": "Lot1_0"
-    },
-    {
-      "@type": "AggregatedEntity",
-      "identifier": "Lot2_1",
-      "rdfs:label": "Lot2_1"
-    },
-    {
-      "@type": "AggregatedEntity",
-      "identifier": "Lot0",
-      "rdfs:label": "Lot0"
+      "identifier": "Lot1_0_Pack0",
+      "rdfs:label": "Lot1_0_Pack0"
     },
     {
       "@type": "AggregatedEntity",
@@ -506,33 +685,18 @@
     },
     {
       "@type": "AggregatedEntity",
-      "identifier": "Lot2_1_Pack0",
-      "rdfs:label": "Lot2_1_Pack0"
-    },
-    {
-      "@type": "AggregatedEntity",
-      "identifier": "Lot1_0_Pack0",
-      "rdfs:label": "Lot1_0_Pack0"
-    },
-    {
-      "@type": "AggregatedEntity",
-      "identifier": "Lot2",
-      "rdfs:label": "Lot2"
-    },
-    {
-      "@type": "AggregatedEntity",
-      "identifier": "Lot2_0_Pack0",
-      "rdfs:label": "Lot2_0_Pack0"
-    },
-    {
-      "@type": "AggregatedEntity",
-      "identifier": null,
-      "rdfs:label": null
+      "identifier": "Lot1",
+      "rdfs:label": "Lot1"
     },
     {
       "@type": "AggregatedEntity",
       "identifier": "Lot0_1",
       "rdfs:label": "Lot0_1"
+    },
+    {
+      "@type": "AggregatedEntity",
+      "identifier": "Lot2_0_Pack0",
+      "rdfs:label": "Lot2_0_Pack0"
     },
     {
       "@type": "AggregatedEntity",
@@ -546,13 +710,33 @@
     },
     {
       "@type": "AggregatedEntity",
+      "identifier": "Lot0",
+      "rdfs:label": "Lot0"
+    },
+    {
+      "@type": "AggregatedEntity",
+      "identifier": "Lot1_0",
+      "rdfs:label": "Lot1_0"
+    },
+    {
+      "@type": "AggregatedEntity",
+      "identifier": "Lot2_1_Pack0",
+      "rdfs:label": "Lot2_1_Pack0"
+    },
+    {
+      "@type": "AggregatedEntity",
       "identifier": "Lot0_0",
       "rdfs:label": "Lot0_0"
     },
     {
       "@type": "AggregatedEntity",
-      "identifier": "Lot1",
-      "rdfs:label": "Lot1"
+      "identifier": "Lot2",
+      "rdfs:label": "Lot2"
+    },
+    {
+      "@type": "AggregatedEntity",
+      "identifier": "Lot2_1",
+      "rdfs:label": "Lot2_1"
     }
   ]
 }
