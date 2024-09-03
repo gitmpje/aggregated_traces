@@ -2,7 +2,7 @@ from networkx import DiGraph, path_graph
 from networkx.algorithms.simple_paths import all_simple_paths
 from pandas import DataFrame
 from pathlib import Path
-from rdflib import Graph, Namespace, URIRef, Variable
+from rdflib import Graph, Literal, Namespace, URIRef, Variable
 from typing import List, Tuple
 
 path_queries = Path(__file__).parent.parent.joinpath("sparql")
@@ -27,7 +27,8 @@ def remove_subsets(lists: List[list]) -> List[list]:
 def compute_trace_probabilities(
     rdf_trace_graph: Graph,
     nx_trace_graph: DiGraph,
-    source_entities: List[str] = [],
+    source_entities: List[URIRef] = [],
+    source_entities_time: List[Tuple[URIRef, Tuple[Literal]]] = [],
     trace_backward: bool = True,
     custom_target_query: str = None,
 ) -> Tuple[DataFrame, List[Tuple[str]]]:
@@ -49,17 +50,32 @@ def compute_trace_probabilities(
         if trace_backward:
             target_query += f"VALUES ?entity_source {{ {' '.join(e.n3() for e in source_entities) } }}"
         else:
-            target_query += f"VALUES (?entity_source ?window_start ?window_end) {{ ({' '.join([' '.join([v.n3() for v in r]) for r in source_entities])}) }}"
+            if not source_entities_time:
+                max_time = rdf_trace_graph.query(
+                    "SELECT (max(?t) as ?max_time) { [] :timestamp ?t }"
+                ).bindings[0][Variable("max_time")]
+                source_entities_time = [
+                    (e, (Literal(0), max_time)) for e in source_entities
+                ]
+
+            target_query += f"VALUES (?entity_source ?window_start ?window_end) {{ ({' '.join([f'{e.n3()} {ws.n3()} {we.n3()}' for e, (ws, we) in source_entities_time])}) }}"
     else:
         target_query = custom_target_query
 
     # Run SPARQL query to retrieve source-target node pairs
     query_result = rdf_trace_graph.query(target_query)
 
+    if not query_result.bindings:
+        raise RuntimeError("No target nodes found for given source entities and constraints!")
+
     # Iterate over source-target pairs and compute path probability
     records = []
     all_paths_edges = []
     for b in query_result.bindings:
+        # Skip when the source event is not in the provided time window
+        if not b.get(Variable("flag_in_window"), Literal(True)).toPython():
+            continue
+
         p = 0
         trace_graph_selected = nx_trace_graph.edge_subgraph(
             [

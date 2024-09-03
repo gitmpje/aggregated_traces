@@ -5,11 +5,14 @@ SELECT DISTINCT
     ?g
     ?entity_source
     ?node_source
+    # Work around for filter that does not work
+    (?node_source_time>=?window_start && ?node_source_time<=?window_end as ?flag_in_window)
     ?entity_target
     ?node_target
     (?intersection_size/?source_size as ?validation_fraction)
 WHERE {
     ?node_source :bizStep "departing" ;
+        :timestamp ?node_source_time ;
         :location ?entity_source .
 
     # Use graph context to only traverse edges in one direction (DirectlyFollows or DirectlyPrecedes) 

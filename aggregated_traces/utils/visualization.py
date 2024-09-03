@@ -1,6 +1,7 @@
 import networkx as nx
 import matplotlib.pyplot as plt
 
+from matplotlib.lines import Line2D
 from typing import List
 
 
@@ -24,7 +25,8 @@ def generate_graph_visualization(
     # edge_style_dict = {}
     node_color_dict = {
         "http://example.org/def/ekg/aggregated_traces/Aggregation": "orange",
-        "http://example.org/def/ekg/aggregated_traces/Transformation": "yellow"
+        "http://example.org/def/ekg/aggregated_traces/Transformation": "yellow",
+        "other": "white",
     }
 
     # Create figure
@@ -127,11 +129,53 @@ def generate_graph_visualization(
         # rotate=False
     )
 
+    # Add legend
+    legend_elements = {
+        k: Line2D(
+            [0],
+            [0],
+            marker="s",
+            markersize=20,
+            markeredgewidth=1,
+            markeredgecolor="black",
+            linewidth=0,
+            color=c,
+        )
+        for k, c in node_color_dict.items()
+    }
+    if edges_backward or edges_forward:
+        legend_elements.update(
+            {
+                "backward": Line2D(
+                    [0],
+                    [0],
+                    linewidth=edge_width * 4,
+                    color="red",
+                ),
+                "forward": Line2D(
+                    [0],
+                    [0],
+                    linewidth=edge_width * 4,
+                    color="orange",
+                ),
+            }
+        )
+
+    plt.legend(
+        legend_elements.values(),
+        legend_elements.keys(),
+        loc="upper left",
+        fontsize="medium",
+        labelspacing=2,
+    )
+
     plt.rcParams.update({"text.usetex": False, "svg.fonttype": "none"})
 
     if base_figure_path:
         if edges_backward or edges_forward:
-            plt.savefig(f"{base_figure_path}_paths.svg")
+            plt.savefig(
+                f"{base_figure_path}_paths.svg",
+            )
         else:
             plt.savefig(f"{base_figure_path}.svg")
 
