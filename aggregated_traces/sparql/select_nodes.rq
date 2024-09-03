@@ -9,7 +9,8 @@ SELECT DISTINCT
 WHERE {
   [] :source|:target ?node .
   ?node a ?node_type ;
-    :entity|:parentEntity|:childEntity ?entity ;
+    :entity|:parentEntity|:childEntity|
+      ((:inputQuantity|:outputQuantity)/:class) ?entity ;
     :timestamp ?time .
   OPTIONAL { ?node :bizStep ?bizStep }
 

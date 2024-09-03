@@ -23,7 +23,8 @@ def generate_graph_visualization(
     node_linewidth_dict = {"packing": 2}
     # edge_style_dict = {}
     node_color_dict = {
-        "http://example.org/def/ekg/aggregated_traces/Aggregation": "orange"
+        "http://example.org/def/ekg/aggregated_traces/Aggregation": "orange",
+        "http://example.org/def/ekg/aggregated_traces/Transformation": "yellow"
     }
 
     # Create figure

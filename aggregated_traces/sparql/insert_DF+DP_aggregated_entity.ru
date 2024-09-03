@@ -91,7 +91,7 @@ WHERE {
       ] .
 
     ?Event_t1 :timestamp ?time_prevEvent ;
-      :quantity|:childQuantity|(:outputQuantity/:class) ?AggregatedEntity .
+      (:quantity|:childQuantity|:outputQuantity)/:class ?AggregatedEntity .
   }
 
   BIND ( iri(md5(concat(str(?Event_t1), str(?Event_t2), str(?AggregatedEntity)))) as ?Relation_DF )
