@@ -1,9 +1,13 @@
+import logging
+
 from networkx import DiGraph, path_graph
 from networkx.algorithms.simple_paths import all_simple_paths
 from pandas import DataFrame
 from pathlib import Path
 from rdflib import Graph, Literal, Namespace, URIRef, Variable
 from typing import List, Tuple
+
+logger = logging.getLogger(__name__)
 
 path_queries = Path(__file__).parent.parent.joinpath("sparql")
 
@@ -58,14 +62,18 @@ def compute_trace_probabilities(
                     (e, (Literal(0), max_time)) for e in source_entities
                 ]
 
-            target_query += f"VALUES (?entity_source ?window_start ?window_end) {{ ({' '.join([f'{e.n3()} {ws.n3()} {we.n3()}' for e, (ws, we) in source_entities_time])}) }}"
+            target_query += f"VALUES (?entity_source ?window_start ?window_end) {{ ({') ('.join([f'{e.n3()} {ws.n3()} {we.n3()}' for e, (ws, we) in source_entities_time])}) }}"
     else:
         target_query = custom_target_query
+
+    logger.debug(target_query)
 
     # Run SPARQL query to retrieve source-target node pairs
     query_result = rdf_trace_graph.query(target_query)
 
-    if not query_result.bindings:
+    logger.debug(query_result.serialize(format="txt").decode())
+
+    if not any(b.get(Variable("flag_in_window")) for b in query_result.bindings):
         raise RuntimeError("No target nodes found for given source entities and constraints!")
 
     # Iterate over source-target pairs and compute path probability

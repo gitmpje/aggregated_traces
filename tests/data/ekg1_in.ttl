@@ -102,14 +102,18 @@
 <http://example.org/id/ekg/aggregated_traces/86/quantity> :amount 2 ;
     :class <http://example.org/id/ekg/aggregated_traces/Lot0_0> .
 
-<http://example.org/id/ekg/aggregated_traces/Lot0> a :AggregatedEntity ;
+<http://example.org/id/ekg/aggregated_traces/Lot0> a :AggregatedEntity,
+        :ProductionLot ;
     rdfs:label "Lot0" .
 
-<http://example.org/id/ekg/aggregated_traces/Lot0_0> a :AggregatedEntity ;
+<http://example.org/id/ekg/aggregated_traces/Lot0_0> a :AggregatedEntity,
+        :ProductionLot ;
     rdfs:label "Lot0_0" .
 
-<http://example.org/id/ekg/aggregated_traces/Lot0_1> a :AggregatedEntity ;
+<http://example.org/id/ekg/aggregated_traces/Lot0_1> a :AggregatedEntity,
+        :ProductionLot ;
     rdfs:label "Lot0_1" .
 
-<http://example.org/id/ekg/aggregated_traces/Lot0_0_Pack0> a :AggregatedEntity ;
+<http://example.org/id/ekg/aggregated_traces/Lot0_0_Pack0> a :AggregatedEntity,
+        :PackingUnit ;
     rdfs:label "Lot0_0_Pack0" .

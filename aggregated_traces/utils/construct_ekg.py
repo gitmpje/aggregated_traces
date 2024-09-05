@@ -1,3 +1,5 @@
+import logging
+
 from pathlib import Path
 from networkx import DiGraph
 from rdflib import Graph, Variable
@@ -5,6 +7,8 @@ from rdflib.plugins.sparql.processor import SPARQLResult
 from typing import Dict
 
 path_queries = Path(__file__).parent.parent.joinpath("sparql")
+
+logger = logging.getLogger(__name__)
 
 
 def insert_DF_DP(g: Graph) -> Graph:
@@ -17,8 +21,8 @@ def check_quantities(g: Graph) -> SPARQLResult:
     with open(path_queries.joinpath("check_amount_in_vs_out.rq")) as f:
         r = g.query(f.read())
 
-    if not all([bool(b[Variable("equal")].toPython()) for b in r.bindings]):
-        raise Exception("Not all nodes have incoming amount equal to outgoing amount!")
+    if not all([b[Variable("equal")].toPython() for b in r.bindings]):
+        logging.warning("Not all nodes have incoming amount equal to outgoing amount!")
 
     return r
 

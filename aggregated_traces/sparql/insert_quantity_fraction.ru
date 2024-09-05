@@ -18,7 +18,7 @@ WHERE {
     # Get total incoming amount for an event
     { SELECT ?event ?type (sum(?amount_in) as ?sum_amount_in) {
       VALUES ?type { :DirectlyFollows_AggregatedEntity :DirectlyPrecedes_AggregatedEntity }
-      [] a ?type;
+      [] a ?type ;
         :target ?event ;
         :amount ?amount_in ;
         :class ?entity .
@@ -27,7 +27,7 @@ WHERE {
     # Get total amount outgoing amount for an event
     { SELECT ?event ?type (sum(?amount_out) as ?sum_amount_out) {
       VALUES ?type { :DirectlyFollows_AggregatedEntity :DirectlyPrecedes_AggregatedEntity }
-      [] a ?type;
+      [] a ?type ;
         :source ?event ;
         :amount ?amount_out ;
         :class ?entity .
@@ -40,6 +40,7 @@ WHERE {
     } GROUP BY ?Relation }
   }
 
-  # If incoming amount matches outgoing amount, use incoming amount, otherwise use outgoing amount
-  BIND( coalesce(?amount_out/if(bound(?sum_amount_in) && ?sum_amount_in=?sum_amount_out, ?sum_amount_in, ?sum_amount_out), 1) as ?fraction)
+  # Calculate fraction for a DF/DP relation as the outgoing amount for this relation divided by the total outgoing amount for a node
+  # Take total outgoing amount, as quantity can change during transformation
+  BIND( coalesce(?amount_out/?sum_amount_out, 1) as ?fraction)
 }

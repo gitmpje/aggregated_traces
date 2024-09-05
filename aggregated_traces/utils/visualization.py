@@ -1,5 +1,6 @@
-import networkx as nx
+import logging
 import matplotlib.pyplot as plt
+import networkx as nx
 
 from matplotlib.lines import Line2D
 from typing import List
@@ -34,10 +35,9 @@ def generate_graph_visualization(
 
     # Create layout using graphviz (using edges in one direction to get a tree structure)
     edges_df = [
-        (e[0], e[1])
-        for e in graph.edges.data()
-        if e[2]["type"]
-        == "http://example.org/def/ekg/aggregated_traces/DirectlyFollows"
+        (e_s, e_t)
+        for e_s, e_t, t in graph.edges(data="type")
+        if t == "http://example.org/def/ekg/aggregated_traces/DirectlyFollows"
     ]
     graph_df = nx.edge_subgraph(graph, edges_df)
 

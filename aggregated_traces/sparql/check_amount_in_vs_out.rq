@@ -8,7 +8,7 @@ SELECT DISTINCT
   (replace(?entity_amount_in, str(<>), "") as ?_entity_amount_in)
   ?sum_amount_out
   (replace(?entity_amount_out, str(<>), "") as ?_entity_amount_out)
-  (str(?sum_amount_in=?sum_amount_out) as ?equal)
+  (?sum_amount_in=?sum_amount_out as ?equal)
 WHERE {
   ?event :timestamp [] .
 

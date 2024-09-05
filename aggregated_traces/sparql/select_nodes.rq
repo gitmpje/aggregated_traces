@@ -6,6 +6,7 @@ SELECT DISTINCT
   (group_concat(distinct str(?node_type)) as ?node_types)
   (coalesce(?bizStep, "") as ?node_bizStep)
   (concat(group_concat(distinct ?entity_label), coalesce(concat(" @ ", ?location_label), ""), " - ", str(?time)) as ?node_entitiesLocationTime)
+  (group_concat(distinct ?entity_type ; separator = ",") as ?node_entityTypes)
 WHERE {
   [] :source|:target ?node .
   ?node a ?node_type ;
@@ -17,6 +18,7 @@ WHERE {
   OPTIONAL { ?node rdfs:label ?_node_label }
   BIND ( coalesce(?_node_label, replace(str(?node), ".+/([a-zA-Z0-9_]+)$", "$1")) as ?node_label )
 
+  OPTIONAL { ?entity a ?entity_type }
   OPTIONAL { ?entity rdfs:label ?_entity_label }
   BIND ( coalesce(?_entity_label, replace(str(?entity), ".+/([a-zA-Z0-9_]+)$", "$1")) as ?entity_label )
 
