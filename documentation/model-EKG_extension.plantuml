@@ -47,6 +47,8 @@ package "Extension\n(inspired by EPCIS2.0; 'EPCIS and CBV Implementation Guideli
     Aggregation -u-|> EPCISEvent
     Transformation -u-|> EPCISEvent
 
+    object Product
+
     object AggregatedEntity
     AggregatedEntity -l-|> Entity
 
@@ -59,6 +61,7 @@ package "Extension\n(inspired by EPCIS2.0; 'EPCIS and CBV Implementation Guideli
     Transformation --> Quantity : inputQuantity
     Transformation --> Quantity : outputQuantity
     Quantity --> AggregatedEntity : class
+    Quantity --> Product : class
 
     object "EventRelation_AggregatedEntity" as DF_DP #LightYellow {
         amount: double
@@ -70,5 +73,8 @@ package "Extension\n(inspired by EPCIS2.0; 'EPCIS and CBV Implementation Guideli
     object "DirectlyPrecedes" as DP
     DF --|> DF_DP
     DP --|> DF_DP
+
+    ' Quantity -[hidden]- AggregatedEntity
+    ' AggregatedEntity -[hidden]- Product
 }
 @enduml

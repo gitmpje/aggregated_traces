@@ -7,7 +7,7 @@ INSERT {
       :source ?Event_t1 ;
       :target ?Event_t2 ;
       :amount ?amount ;
-      :class ?AggregatedEntity .
+      :class ?AggregatedEntity, ?Product .
   }
   
   GRAPH <urn:ekg:directlyPrecedes> {
@@ -15,7 +15,7 @@ INSERT {
       :source ?Event_t2 ;
       :target ?Event_t1 ;
       :amount ?amount ;
-      :class ?AggregatedEntity .
+      :class ?AggregatedEntity, ?Product .
   }
 }
 WHERE {
@@ -25,6 +25,8 @@ WHERE {
       ?Event_t2 :entity|:parentEntity|:childEntity|
           (:inputQuantity/:class) ?AggregatedEntity ;
         :timestamp ?time .
+
+      ?AggregatedEntity a :AggregatedEntity .
 
       {
         [] :entity|:parentEntity ?AggregatedEntity ;
@@ -56,12 +58,12 @@ WHERE {
       ?Event_t2 :parentEntity ?AggregatedEntity .
       ?Event_t1 :timestamp ?time_prevEvent ;
         :quantity|:childQuantity|:outputQuantity [
-          :class ?AggregatedEntity ;
+          :class ?AggregatedEntity, ?Product ;
           :amount ?amount ;
         ] .
     } UNION {
       ?Event_t2 :childQuantity [
-          :class ?AggregatedEntity ;
+          :class ?AggregatedEntity, ?Product ;
           :amount ?amount ;
         ] .
       ?Event_t1 :timestamp ?time_prevEvent ;
@@ -79,14 +81,14 @@ WHERE {
     }
     ?Event_t1 :timestamp ?time_prevEvent ;
       :quantity|:childQuantity|:outputQuantity [
-        :class ?AggregatedEntity ;
+        :class ?AggregatedEntity, ?Product ;
         :amount ?amount ;
       ] .
   } UNION {
     # Transformation
     ?Event_t2 a :Transformation ;
       :inputQuantity [
-        :class ?AggregatedEntity ;
+        :class ?AggregatedEntity, ?Product ;
         :amount ?amount ;
       ] .
 

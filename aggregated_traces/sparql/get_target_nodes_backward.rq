@@ -1,5 +1,4 @@
 PREFIX : <http://example.org/def/ekg/aggregated_traces/>
-PREFIX prov: <http://www.w3.org/ns/prov#>
 
 SELECT DISTINCT
     ?g

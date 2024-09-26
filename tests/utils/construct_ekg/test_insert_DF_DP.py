@@ -9,8 +9,9 @@ from aggregated_traces.utils.construct_ekg import insert_DF_DP
 DATA_PATH = os.path.join(os.getcwd(), "tests", "data")
 
 test_graph_files = [
-    ("ekg1_in.ttl", "ekg1_DF_DP.ttl"),  # Object and Aggregation events
-    ("ekg2_in.ttl", "ekg2_DF_DP.ttl"),  # Object, Aggregation, and Transformation events
+    ("ekg_in.ttl", "ekg_DF_DP.ttl"),  # Object and Aggregation events
+    ("ekg_in-product.ttl", "ekg_DF_DP-product.ttl"),  # Object and Aggregation events + Product
+    ("ekg_in.ttl", "ekg_DF_DP.ttl"),  # Object, Aggregation, and Transformation events
 ]
 
 

@@ -33,7 +33,7 @@ def insert_fractions(g: Graph) -> Graph:
     return g
 
 
-def getAttributes(b: dict, t: str) -> Dict[str, str]:
+def get_attributes(b: dict, t: str) -> Dict[str, str]:
     return {
         k.toPython().replace(f"?{t}_", ""): v.toPython()
         for k, v in b.items()
@@ -41,7 +41,7 @@ def getAttributes(b: dict, t: str) -> Dict[str, str]:
     }
 
 
-def generateNetworkxDiGraph(g: Graph) -> DiGraph:
+def generate_networkx_di_graph(g: Graph) -> DiGraph:
     nx_graph = DiGraph()
 
     with open(path_queries.joinpath("select_nodes.rq")) as f:
@@ -49,7 +49,7 @@ def generateNetworkxDiGraph(g: Graph) -> DiGraph:
 
     r = g.query(query_nodes)
     for b in r.bindings:
-        nx_graph.add_node(b[Variable("node")], **getAttributes(b, "node"))
+        nx_graph.add_node(b[Variable("node")], **get_attributes(b, "node"))
 
     with open(path_queries.joinpath("select_edges.rq")) as f:
         query_edges = f.read()
@@ -59,7 +59,7 @@ def generateNetworkxDiGraph(g: Graph) -> DiGraph:
         nx_graph.add_edge(
             b[Variable("nodeSource")],
             b[Variable("nodeTarget")],
-            **getAttributes(b, "edge"),
+            **get_attributes(b, "edge"),
         )
 
     return nx_graph

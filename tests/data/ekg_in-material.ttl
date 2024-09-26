@@ -13,7 +13,8 @@
     :timestamp 2.593123e+00 .
 
 <http://example.org/id/ekg/aggregated_traces/20/quantity> :amount 3 ;
-    :class <http://example.org/id/ekg/aggregated_traces/Lot0> .
+    :class <http://example.org/id/ekg/aggregated_traces/Lot0>,
+        <http://example.org/id/ekg/aggregated_traces/lotModel/> .
 
 <http://example.org/id/ekg/aggregated_traces/100> a :Object ;
     :bizStep "arriving" ;
@@ -25,7 +26,8 @@
     :timestamp 6.402289e+00 .
 
 <http://example.org/id/ekg/aggregated_traces/100/quantity> :amount 2 ;
-    :class <http://example.org/id/ekg/aggregated_traces/Lot0_0> .
+    :class <http://example.org/id/ekg/aggregated_traces/Lot0_0>,
+        <http://example.org/id/ekg/aggregated_traces/lotModel/DB> .
 
 <http://example.org/id/ekg/aggregated_traces/110> a :Object ;
     :bizStep "departing" ;
@@ -37,7 +39,8 @@
     :timestamp 6.616829e+00 .
 
 <http://example.org/id/ekg/aggregated_traces/110/quantity> :amount 2 ;
-    :class <http://example.org/id/ekg/aggregated_traces/Lot0_0> .
+    :class <http://example.org/id/ekg/aggregated_traces/Lot0_0>,
+        <http://example.org/id/ekg/aggregated_traces/lotModel/DB-WB> .
 
 <http://example.org/id/ekg/aggregated_traces/119> a :Object ;
     :bizStep "arriving" ;
@@ -48,7 +51,8 @@
     :timestamp 1.026999e+01 .
 
 <http://example.org/id/ekg/aggregated_traces/119/quantity> :amount 1 ;
-    :class <http://example.org/id/ekg/aggregated_traces/Lot0_1> .
+    :class <http://example.org/id/ekg/aggregated_traces/Lot0_1>,
+        <http://example.org/id/ekg/aggregated_traces/lotModel/DB> .
 
 <http://example.org/id/ekg/aggregated_traces/140> a :Object ;
     :bizStep "departing" ;
@@ -59,7 +63,8 @@
     :timestamp 1.266245e+01 .
 
 <http://example.org/id/ekg/aggregated_traces/140/quantity> :amount 1 ;
-    :class <http://example.org/id/ekg/aggregated_traces/Lot0_1> .
+    :class <http://example.org/id/ekg/aggregated_traces/Lot0_1>,
+        <http://example.org/id/ekg/aggregated_traces/lotModel/DB-WB> .
 
 <http://example.org/id/ekg/aggregated_traces/144> a :Transformation ;
     :bizStep "assembling" ;
@@ -71,13 +76,16 @@
     :timestamp 1.266345e+01 .
 
 <http://example.org/id/ekg/aggregated_traces/144/inputQuantity1> :amount 1 ;
-    :class <http://example.org/id/ekg/aggregated_traces/WBM1_1> .
+    :class <http://example.org/id/ekg/aggregated_traces/WBM1_1>,
+        <http://example.org/id/ekg/aggregated_traces/material/WBM1> .
 
 <http://example.org/id/ekg/aggregated_traces/144/inputQuantity2> :amount 1 ;
-    :class <http://example.org/id/ekg/aggregated_traces/Lot0_1> .
+    :class <http://example.org/id/ekg/aggregated_traces/Lot0_1>,
+        <http://example.org/id/ekg/aggregated_traces/lotModel/DB-WB> .
 
 <http://example.org/id/ekg/aggregated_traces/144/outputQuantity> :amount 1 ;
-    :class <http://example.org/id/ekg/aggregated_traces/Lot0_1> .
+    :class <http://example.org/id/ekg/aggregated_traces/Lot0_1>,
+        <http://example.org/id/ekg/aggregated_traces/lotModel/DB-WB> .
 
 <http://example.org/id/ekg/aggregated_traces/150> a :Aggregation ;
     :action "ADD" ;
@@ -92,10 +100,12 @@
     :timestamp 1.276345e+01 .
 
 <http://example.org/id/ekg/aggregated_traces/150/childQuantity1> :amount 1 ;
-    :class <http://example.org/id/ekg/aggregated_traces/Lot0_1> .
+    :class <http://example.org/id/ekg/aggregated_traces/Lot0_1>,
+        <http://example.org/id/ekg/aggregated_traces/lotModel/DB-WB> .
 
 <http://example.org/id/ekg/aggregated_traces/150/childQuantity2> :amount 1 ;
-        :class <http://example.org/id/ekg/aggregated_traces/Lot0_0> .
+        :class <http://example.org/id/ekg/aggregated_traces/Lot0_0>,
+        <http://example.org/id/ekg/aggregated_traces/lotModel/DB-WB> .
 
 <http://example.org/id/ekg/aggregated_traces/65> a :Object ;
     :bizStep "departing" ;
@@ -108,7 +118,8 @@
     :timestamp 2.910227e+00 .
 
 <http://example.org/id/ekg/aggregated_traces/65/quantity> :amount 3 ;
-    :class <http://example.org/id/ekg/aggregated_traces/Lot0> .
+    :class <http://example.org/id/ekg/aggregated_traces/Lot0>,
+        <http://example.org/id/ekg/aggregated_traces/lotModel/DB> .
 
 <http://example.org/id/ekg/aggregated_traces/79> a :Transformation ;
     :bizStep "assembling" ;
@@ -123,16 +134,20 @@
     :timestamp 2.911227e+00 .
 
 <http://example.org/id/ekg/aggregated_traces/79/inputQuantity1> :amount 2 ;
-    :class <http://example.org/id/ekg/aggregated_traces/DBM_2> .
+    :class <http://example.org/id/ekg/aggregated_traces/DBM_2>,
+        <http://example.org/id/ekg/aggregated_traces/materials/DBM> .
 
 <http://example.org/id/ekg/aggregated_traces/79/inputQuantity2> :amount 1 ;
-    :class <http://example.org/id/ekg/aggregated_traces/DBM_3> .
+    :class <http://example.org/id/ekg/aggregated_traces/DBM_3>,
+        <http://example.org/id/ekg/aggregated_traces/material/DBM> .
 
 <http://example.org/id/ekg/aggregated_traces/79/inputQuantity3> :amount 3 ;
-    :class <http://example.org/id/ekg/aggregated_traces/Lot0> .
+    :class <http://example.org/id/ekg/aggregated_traces/Lot0>,
+        <http://example.org/id/ekg/aggregated_traces/lotModel/DB> .
 
 <http://example.org/id/ekg/aggregated_traces/79/outputQuantity> :amount 3 ;
-    :class <http://example.org/id/ekg/aggregated_traces/Lot0> .
+    :class <http://example.org/id/ekg/aggregated_traces/Lot0>,
+        <http://example.org/id/ekg/aggregated_traces/lotModel/DB> .
 
 <http://example.org/id/ekg/aggregated_traces/124> a :Transformation ;
     :bizStep "assembling" ;
@@ -145,13 +160,16 @@
     :timestamp 6.617829e+00 .
 
 <http://example.org/id/ekg/aggregated_traces/124/inputQuantity1> :amount 2 ;
-    :class <http://example.org/id/ekg/aggregated_traces/WBM1_0> .
+    :class <http://example.org/id/ekg/aggregated_traces/WBM1_0>,
+        <http://example.org/id/ekg/aggregated_traces/material/WBM1> .
 
 <http://example.org/id/ekg/aggregated_traces/124/inputQuantity2> :amount 2 ;
-    :class <http://example.org/id/ekg/aggregated_traces/Lot0_0> .
+    :class <http://example.org/id/ekg/aggregated_traces/Lot0_0>,
+        <http://example.org/id/ekg/aggregated_traces/lotModel/DB-WB> .
 
 <http://example.org/id/ekg/aggregated_traces/124/outputQuantity> :amount 2 ;
-    :class <http://example.org/id/ekg/aggregated_traces/Lot0_0> .
+    :class <http://example.org/id/ekg/aggregated_traces/Lot0_0>,
+        <http://example.org/id/ekg/aggregated_traces/lotModel/DB-WB> .
 
 <http://example.org/id/ekg/aggregated_traces/87> a :Aggregation ;
     :action "DELETE" ;
@@ -163,10 +181,12 @@
     :timestamp 3.011227e+00 .
 
 <http://example.org/id/ekg/aggregated_traces/87/childQuantity1> :amount 1 ;
-    :class <http://example.org/id/ekg/aggregated_traces/Lot0_1> .
+    :class <http://example.org/id/ekg/aggregated_traces/Lot0_1>,
+        <http://example.org/id/ekg/aggregated_traces/lotModel/DB> .
 
 <http://example.org/id/ekg/aggregated_traces/87/childQuantity2> :amount 2 ;
-    :class <http://example.org/id/ekg/aggregated_traces/Lot0_0> .
+    :class <http://example.org/id/ekg/aggregated_traces/Lot0_0>,
+        <http://example.org/id/ekg/aggregated_traces/lotModel/DB> .
 
 <http://example.org/id/ekg/aggregated_traces/DBM_2> a :AggregatedEntity,
         :MaterialLot ;
@@ -199,3 +219,18 @@
 <http://example.org/id/ekg/aggregated_traces/Lot0_1_Pack0> a :AggregatedEntity,
         :PackingUnit ;
     rdfs:label "Lot0_1_Pack0" .
+
+<http://example.org/id/ekg/aggregated_traces/lotModel/> a :Product ;
+    rdfs:label "" .
+
+<http://example.org/id/ekg/aggregated_traces/lotModel/DB> a :Product ;
+    rdfs:label "DB" .
+
+<http://example.org/id/ekg/aggregated_traces/lotModel/DB-WB> a :Product ;
+    rdfs:label "DB-WB" .
+
+<http://example.org/id/ekg/aggregated_traces/material/DBM> a :Product ;
+    rdfs:label "DBM" .
+
+<http://example.org/id/ekg/aggregated_traces/material/WBM1> a :Product ;
+    rdfs:label "WBM1" .

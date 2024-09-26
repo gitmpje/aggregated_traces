@@ -5,7 +5,7 @@ SELECT DISTINCT
   ?node_label
   (group_concat(distinct str(?node_type)) as ?node_types)
   (coalesce(?bizStep, "") as ?node_bizStep)
-  (concat(group_concat(distinct ?entity_label), coalesce(concat(" @ ", ?location_label), ""), " - ", str(?time)) as ?node_entitiesLocationTime)
+  (concat(group_concat(distinct ?entity_label), coalesce(concat(" @ ", ?location_label), ""), " - ", str(round(?time*1000)/1000)) as ?node_entitiesLocationTime)
   (group_concat(distinct ?entity_type ; separator = ",") as ?node_entityTypes)
 WHERE {
   [] :source|:target ?node .

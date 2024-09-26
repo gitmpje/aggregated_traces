@@ -105,7 +105,6 @@ def compute_trace_probabilities(
             ]
         )
         for path in paths:
-            # print([n.toPython().split("/")[-1] for n in path])
             path_graph_ = path_graph(path)
             all_paths_edges.extend(path_graph_.edges())
 
@@ -115,6 +114,8 @@ def compute_trace_probabilities(
                 #     print(edge[0], nx_graph.get_edge_data(*edge).get("fraction", 1))
                 # print(edge, trace_graph_selected.get_edge_data(*edge).get(edge_label_key))
                 p_path *= trace_graph_selected.get_edge_data(*edge).get("fraction", 1)
+
+            logger.debug(" %s: path %s - probability %s" % (b.get(Variable("entity_source")), [n.toPython().split("/")[-1] for n in path], p_path))
 
             p += p_path
 
