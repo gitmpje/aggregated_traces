@@ -51,41 +51,54 @@ WHERE {
   }
 
   {
-    # Aggregation - ADD
-    ?Event_t2 a :Aggregation ;
-      :action "ADD" .
-    {
-      ?Event_t2 :parentEntity ?AggregatedEntity .
-      ?Event_t1 :timestamp ?time_prevEvent ;
-        :quantity|:childQuantity|:outputQuantity [
-          :class ?AggregatedEntity, ?Product ;
-          :amount ?amount ;
-        ] .
-    } UNION {
-      ?Event_t2 :childQuantity [
-          :class ?AggregatedEntity, ?Product ;
-          :amount ?amount ;
-        ] .
-      ?Event_t1 :timestamp ?time_prevEvent ;
-        :entity|:parentEntity|:childEntity|(:outputQuantity/:class) ?AggregatedEntity  .
-    }
-  } UNION {
-    # Object or Aggregation - DELETE
-    {
-      ?Event_t2 a :Object ;
-        :entity ?AggregatedEntity .
-    } UNION {
-      ?Event_t2 a :Aggregation ;
-        :action "DELETE" ;
-        :parentEntity ?AggregatedEntity .
-    }
+    # Object
+    # Take quantity from source event
+    ?Event_t2 a :Object ;
+      :entity ?AggregatedEntity .
+
     ?Event_t1 :timestamp ?time_prevEvent ;
       :quantity|:childQuantity|:outputQuantity [
         :class ?AggregatedEntity, ?Product ;
         :amount ?amount ;
       ] .
   } UNION {
+    # Aggregation - ADD
+    ?Event_t2 a :Aggregation ;
+      :action "ADD" .
+
+    {
+      # Take quantity from target event
+      ?Event_t2 :childQuantity [
+          :class ?AggregatedEntity, ?Product ;
+          :amount ?amount ;
+        ] .
+      ?Event_t1 :timestamp ?time_prevEvent ;
+        :entity|:parentEntity|:childEntity|(:outputQuantity/:class) ?AggregatedEntity  .
+    } UNION {
+      # Otherwise, take quantity from source event
+      ?Event_t2 :parentEntity ?AggregatedEntity .
+      ?Event_t1 :timestamp ?time_prevEvent ;
+        :quantity|:childQuantity|:outputQuantity [
+          :class ?AggregatedEntity, ?Product ;
+          :amount ?amount ;
+        ] .      
+    }
+  } UNION {
+    # Aggregation - DELETE
+    ?Event_t2 a :Aggregation ;
+      :action "DELETE" ;
+      :parentEntity ?AggregatedEntity .
+
+    # Take quantity from source event
+    ?Event_t1 :timestamp ?time_prevEvent ;
+      :quantity|:childQuantity|:outputQuantity [
+        :class ?AggregatedEntity, ?Product ;
+        :amount ?amount ;
+      ] .
+
+  } UNION {
     # Transformation
+    # Take quantity from target event
     ?Event_t2 a :Transformation ;
       :inputQuantity [
         :class ?AggregatedEntity, ?Product ;
