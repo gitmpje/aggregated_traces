@@ -1,4 +1,4 @@
-BASE <http://example.org/id/aggregated_traces/>
+BASE <http://example.org/id/ekg/aggregated_traces/>
 PREFIX : <http://example.org/def/ekg/aggregated_traces/>
 
 INSERT {
@@ -96,13 +96,40 @@ WHERE {
       :action "DELETE" ;
       :parentEntity ?AggregatedEntity .
 
-    # Take quantity from source event
-    ?Event_t1 :timestamp ?time_prevEvent ;
-      :quantity|:childQuantity|:outputQuantity [
-        :class ?AggregatedEntity, ?Product ;
-        :amount ?amount ;
-      ] .
+    {
+      # Take quantity from source event
+      ?Event_t1 :timestamp ?time_prevEvent ;
+        :quantity|:childQuantity|:outputQuantity [
+          :class ?AggregatedEntity, ?Product ;
+          :amount ?amount ;
+        ] .
 
+      MINUS {
+        ?Event_t1 a :Aggregation ;
+          :action "ADD" .
+      }
+    } UNION {
+      # Take sum of quantity from source event if source is Aggregation - ADD
+      ?Event_t1 a :Aggregation ;
+        :action "ADD" ;
+        :parentEntity ?AggregatedEntity ;
+        :timestamp ?time_prevEvent .
+
+      {
+        SELECT ?Event_t1 ?Product (SUM(?_amount) AS ?amount)
+        WHERE {
+          ?Event_t1 a :Aggregation ;
+            :action "ADD" ;
+            :childQuantity _:ChildQuantity .
+
+          _:ChildQuantity :amount ?_amount .
+          OPTIONAL {
+            _:ChildQuantity :class ?Product .
+            ?Product a :Product .
+          }
+        } GROUP BY ?Event_t1 ?Product
+      }
+    }
   } UNION {
     # Transformation
     # Take quantity from target event

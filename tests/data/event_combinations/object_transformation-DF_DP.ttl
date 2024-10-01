@@ -1,0 +1,80 @@
+@base <http://example.org/id/ekg/aggregated_traces/> .
+@prefix : <http://example.org/def/ekg/aggregated_traces/> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<1> a :Object ;
+    :entity <Lot0> ;
+    :quantity <1/quantity> ;
+    :timestamp 1 .
+
+<1/quantity> :amount 5 ;
+    :class <Lot0>,
+        <lotModel/0> .
+
+<2> a :Object ;
+    :entity <Lot1> ;
+    :quantity <2/quantity> ;
+    :timestamp 2 .
+
+<2/quantity> :amount 5 ;
+    :class <Lot1>,
+        <lotModel/0> .
+
+<3> a :Transformation ;
+    :inputQuantity <3/inputQuantity1>,
+        <3/inputQuantity2> ;
+    :outputQuantity <3/outputQuantity> ;
+    :timestamp 3 .
+
+<3/inputQuantity1> :amount 5 ;
+    :class <Lot0>,
+        <lotModel/1> .
+
+<3/inputQuantity2> :amount 5 ;
+    :class <Lot1>,
+        <lotModel/1> .
+
+<3/outputQuantity> :amount 5 ;
+    :class <Lot1>,
+        <lotModel/2> .
+
+<Lot0> a :AggregatedEntity .
+
+<Lot1> a :AggregatedEntity .
+
+<lotModel/0> a :Product .
+
+<lotModel/1> a :Product .
+
+<44910f5467846db50bde9fced8143db0> a :DirectlyFollows,
+        :DirectlyFollows_AggregatedEntity ;
+    :amount 5 ;
+    :class <Lot0>,
+        <lotModel/1> ;
+    :source <1> ;
+    :target <3> .
+
+<5eae3ea44f1d533353a7d7a27fdca0d3> a :DirectlyPrecedes,
+        :DirectlyPrecedes_AggregatedEntity ;
+    :amount 5 ;
+    :class <Lot0>,
+        <lotModel/1> ;
+    :source <3> ;
+    :target <1> .
+
+<5c77c4bcae88f5759cf61bc595d92f72> a :DirectlyFollows,
+        :DirectlyFollows_AggregatedEntity ;
+    :amount 5 ;
+    :class <Lot1>,
+        <lotModel/1> ;
+    :source <2> ;
+    :target <3> .
+
+<f7cc0be525724a1451189b32cbfd73c3> a :DirectlyPrecedes,
+        :DirectlyPrecedes_AggregatedEntity ;
+    :amount 5 ;
+    :class <Lot1>,
+        <lotModel/1> ;
+    :source <3> ;
+    :target <2> .

@@ -1,0 +1,41 @@
+@base <http://example.org/id/ekg/aggregated_traces/> .
+@prefix : <http://example.org/def/ekg/aggregated_traces/> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<1> a :Aggregation ;
+    :action "ADD" ;
+    :parentEntity <Lot0> ;
+    :childEntity <Lot1> ;
+    :childQuantity <1/childQuantity1>,
+        <1/childQuantity2> ;
+    :timestamp 1 .
+
+<1/childQuantity1> :amount 5 ;
+    :class <Lot0>,
+        <lotModel/0> .
+
+<1/childQuantity2> :amount 5 ;
+    :class <Lot1>,
+        <lotModel/0> .
+
+<2> a :Transformation ;
+    :inputQuantity <2/inputQuantity> ;
+    :outputQuantity <2/outputQuantity> ;
+    :timestamp 2 .
+
+<2/inputQuantity> :amount 10 ;
+    :class <Lot0>,
+        <lotModel/0> .
+
+<2/outputQuantity> :amount 5 ;
+    :class <Lot2>,
+        <lotModel/0> .
+
+<Lot0> a :AggregatedEntity .
+
+<Lot1> a :AggregatedEntity .
+
+<Lot2> a :AggregatedEntity .
+
+<lotModel/0> a :Product .

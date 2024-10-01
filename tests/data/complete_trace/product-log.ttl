@@ -1,0 +1,138 @@
+@base <http://example.org/id/ekg/aggregated_traces/> .
+@prefix : <http://example.org/def/ekg/aggregated_traces/> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<20> a :Object ;
+    :bizStep "arriving" ;
+    :device <Lot0_Device0>,
+        <Lot0_Device1>,
+        <Lot0_Device2> ;
+    :entity <Lot0> ;
+    :location <DB1> ;
+    :quantity <20/quantity> ;
+    :timestamp 9.050268e-02 .
+
+<20/quantity> :amount 3 ;
+    :class <Lot0>,
+        <lotModel/> .
+
+<24> a :Object ;
+    :bizStep "departing" ;
+    :device <Lot0_Device0>,
+        <Lot0_Device1>,
+        <Lot0_Device2> ;
+    :entity <Lot0> ;
+    :location <DB1> ;
+    :quantity <24/quantity> ;
+    :timestamp 7.410656e-01 .
+
+<24/quantity> :amount 3 ;
+    :class <Lot0>,
+        <lotModel/DB> .
+
+<34> a :Aggregation ;
+    :action "DELETE" ;
+    :childEntity <Lot0_0>,
+        <Lot0_1> ;
+    :childQuantity <34/quantity1>,
+        <34/quantity2> ;
+    :parentEntity <Lot0> ;
+    :timestamp 8.410656e-01 .
+
+<34/quantity1> :amount 2 ;
+    :class <Lot0_0>,
+        <lotModel/DB> .
+
+<34/quantity2> :amount 1 ;
+    :class <Lot0_1>,
+        <lotModel/DB> .
+
+<58> a :Object ;
+    :bizStep "arriving" ;
+    :device <Lot0_Device0>,
+        <Lot0_Device1> ;
+    :entity <Lot0_0> ;
+    :location <WB1> ;
+    :quantity <58/quantity> ;
+    :timestamp 2.558738e+00 .
+
+<58/quantity> :amount 2 ;
+    :class <Lot0_0>,
+        <lotModel/DB> .
+
+<59> a :Object ;
+    :bizStep "arriving" ;
+    :device <Lot0_Device2> ;
+    :entity <Lot0_1> ;
+    :location <WB2> ;
+    :quantity <59/quantity> ;
+    :timestamp 1.539659e+00 .
+
+<59/quantity> :amount 1 ;
+    :class <Lot0_1>,
+        <lotModel/DB> .
+
+<72> a :Object ;
+    :bizStep "departing" ;
+    :device <Lot0_Device2> ;
+    :entity <Lot0_1> ;
+    :location <WB2> ;
+    :quantity <72/quantity> ;
+    :timestamp 2.884741e+00 .
+
+<72/quantity> :amount 1 ;
+    :class <Lot0_1>,
+        <lotModel/DB-WB> .
+
+<75> a :Object ;
+    :bizStep "departing" ;
+    :device <Lot0_Device0>,
+        <Lot0_Device1> ;
+    :entity <Lot0_0> ;
+    :location <WB1> ;
+    :quantity <75/quantity> ;
+    :timestamp 2.649328e+00 .
+
+<75/quantity> :amount 2 ;
+    :class <Lot0_0>,
+        <lotModel/DB-WB> .
+
+<86> a :Aggregation ;
+    :action "ADD" ;
+    :bizStep "packing" ;
+    :childEntity <Lot0_0> ;
+    :childQuantity <86/quantity> ;
+    :device <Lot0_Device0>,
+        <Lot0_Device1> ;
+    :parentEntity <Lot0_0_Pack0> ;
+    :timestamp 2.749328e+00 .
+
+<86/quantity> :amount 2 ;
+    :class <Lot0_0>,
+        <lotModel/DB-WB> .
+
+<Lot0> a :AggregatedEntity,
+        :ProductionLot ;
+    rdfs:label "Lot0" .
+
+<Lot0_0> a :AggregatedEntity,
+        :ProductionLot ;
+    rdfs:label "Lot0_0" .
+
+<Lot0_1> a :AggregatedEntity,
+        :ProductionLot ;
+    rdfs:label "Lot0_1" .
+
+<Lot0_0_Pack0> a :AggregatedEntity,
+        :PackingUnit ;
+    rdfs:label "Lot0_0_Pack0" .
+
+<lotModel/> a :Product ;
+    rdfs:label "" .
+
+<lotModel/DB> a :Product ;
+    rdfs:label "DB" .
+
+<lotModel/DB-WB> a :Product ;
+    rdfs:label "DB-WB" .

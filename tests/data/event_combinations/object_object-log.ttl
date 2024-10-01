@@ -1,0 +1,28 @@
+@base <http://example.org/id/ekg/aggregated_traces/> .
+@prefix : <http://example.org/def/ekg/aggregated_traces/> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<1> a :Object ;
+    :entity <Lot0> ;
+    :quantity <1/quantity> ;
+    :timestamp 1 .
+
+<1/quantity> :amount 5 ;
+    :class <Lot0>,
+        <lotModel/0> .
+
+<2> a :Object ;
+    :entity <Lot0> ;
+    :quantity <2/quantity> ;
+    :timestamp 2 .
+
+<2/quantity> :amount 5 ;
+    :class <Lot0>,
+        <lotModel/1> .
+
+<Lot0> a :AggregatedEntity .
+
+<lotModel/0> a :Product .
+
+<lotModel/1> a :Product .
