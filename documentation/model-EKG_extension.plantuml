@@ -1,7 +1,7 @@
 @startuml
 set namespaceSeparator none
 
-package "Core Meta-Model\n(Esser and Fahland, 2021; Fahland, 2022; Swevels et al., 2023)" <<Rectangle>> {
+package "Core Meta-Model\n(Esser and Fahland, 2021; Fahland, 2022)" <<Rectangle>> {
     object Event #LightBlue {
         activity : string
         timestamp : datetime
@@ -22,12 +22,22 @@ package "Core Meta-Model\n(Esser and Fahland, 2021; Fahland, 2022; Swevels et al
     Entity --> Entity : relation
     ' Log --> Event : event
 
-    Event --> Event : directlyFollows
-    Event --> Event : directlyPrecedes
     Activity --> Activity : directlyFollowsActivity
+
+    object "EventRelation_AggregatedEntity" as DF_DP #LightYellow {
+        entity: Entity [1..*]
+    }
+    (Event, Event) . DF_DP
+
+    object "DirectlyFollows" as DF
+    object "DirectlyPrecedes" as DP
+    DF -d-|> DF_DP
+    DP -d-|> DF_DP
+
+    DF_DP -[hidden]r- Event
 }
 
-package "Extension\n(inspired by EPCIS2.0; 'EPCIS and CBV Implementation Guideline')" <<Rectangle>> {
+package "Extension\n(based on EPCIS2.0; 'EPCIS and CBV Implementation Guideline')" <<Rectangle>> {
     object EPCISEvent
     EPCISEvent --|> Event
     object Aggregation {
@@ -63,16 +73,11 @@ package "Extension\n(inspired by EPCIS2.0; 'EPCIS and CBV Implementation Guideli
     Quantity --> AggregatedEntity : class
     Quantity --> Product : class
 
-    object "EventRelation_AggregatedEntity" as DF_DP #LightYellow {
+    object "EventRelation_AggregatedEntity" as DF_DP_AggregatedEntity #LightYellow {
         amount: double
         fraction: decimal
     }
-    (EPCISEvent, EPCISEvent) . DF_DP
-
-    object "DirectlyFollows" as DF
-    object "DirectlyPrecedes" as DP
-    DF --|> DF_DP
-    DP --|> DF_DP
+    (EPCISEvent, EPCISEvent) . DF_DP_AggregatedEntity
 
     ' Quantity -[hidden]- AggregatedEntity
     ' AggregatedEntity -[hidden]- Product
