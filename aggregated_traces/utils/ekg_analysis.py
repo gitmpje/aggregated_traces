@@ -153,7 +153,7 @@ def compute_trace_probabilities(
 
     # Replace URIs with prefix
     for c in df.columns:
-        if type(df[c].iloc[0]) == URIRef:
+        if isinstance(df[c].iloc[0], URIRef):
             df[c] = df[c].str.replace(EKG_ID, "ekg_id:")
 
     return df, all_paths_edges
