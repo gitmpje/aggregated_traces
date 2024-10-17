@@ -73,8 +73,18 @@ def compute_trace_probabilities(
 
     logger.debug(query_result.serialize(format="txt").decode())
 
-    if not any(b.get(Variable("flag_in_window")) for b in query_result.bindings):
-        raise RuntimeError("No target nodes found for given source entities and constraints!")
+    # Raise exception if no nodes can be found in the backward trace that match the given constraints
+    if not query_result.bindings:
+        raise RuntimeError(
+            "No target nodes found for given source entities and constraints!"
+        )
+
+    if (Variable("flag_in_window") in query_result.vars) and not any(
+        b.get(Variable("flag_in_window")) for b in query_result.bindings
+    ):
+        raise RuntimeError(
+            "No target nodes found for given source entities and constraints!"
+        )
 
     # Iterate over source-target pairs and compute path probability
     records = []
@@ -115,7 +125,14 @@ def compute_trace_probabilities(
                 # print(edge, trace_graph_selected.get_edge_data(*edge).get(edge_label_key))
                 p_path *= trace_graph_selected.get_edge_data(*edge).get("fraction", 1)
 
-            logger.debug(" %s: path %s - probability %s" % (b.get(Variable("entity_source")), [n.toPython().split("/")[-1] for n in path], p_path))
+            logger.debug(
+                " %s: path %s - probability %s"
+                % (
+                    b.get(Variable("entity_source")),
+                    [n.toPython().split("/")[-1] for n in path],
+                    p_path,
+                )
+            )
 
             p += p_path
 
@@ -126,9 +143,7 @@ def compute_trace_probabilities(
                 "node_source": b[Variable("node_source")],
                 "entity_target": b.get(Variable("entity_target")),
                 "node_target": b[Variable("node_target")],
-                "validation_fraction": b.get(
-                    Variable("validation_fraction")
-                ).toPython(),
+                "product_model": b.get(Variable("product_model")),
                 "probability": p,
             }
         )

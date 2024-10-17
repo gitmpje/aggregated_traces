@@ -8,7 +8,6 @@ SELECT DISTINCT
     (?node_source_time>=?window_start && ?node_source_time<=?window_end as ?flag_in_window)
     ?entity_target
     ?node_target
-    (coalesce(?intersection_size/?source_size, "N/A") as ?validation_fraction)
 WHERE {
     {
         ?node_source :bizStep "departing" ;
@@ -28,14 +27,4 @@ WHERE {
     # Only include packing units
     ?entity_target a :PackingUnit ;
         rdfs:label ?entity_target_label .
-
-    # Exclude nodes without common devices (empty intersection set)
-    # { SELECT DISTINCT ?node_target ?node_source (count(distinct ?unit) as ?intersection_size) {
-    #     ?node_source :device|:material ?unit .
-    #     ?node_target :device/:material? ?unit .
-    # } GROUP BY ?node_target ?node_source }
-
-    # { SELECT DISTINCT ?node_source (count(distinct ?unit) as ?source_size) {
-    #     ?node_source :device|:material ?unit .
-    # } GROUP BY ?node_source}
 }

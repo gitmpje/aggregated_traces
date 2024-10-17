@@ -6,7 +6,7 @@ SELECT DISTINCT
     ?node_source
     ?entity_target
     ?node_target
-    (?intersection_size/?source_size as ?validation_fraction)
+    ?product_model
 WHERE {
     ?node_source :parentEntity ?entity_source .
 
@@ -15,18 +15,12 @@ WHERE {
 
     ?node_target :bizStep "departing" ;
         :location ?entity_target .
+    optional {
+        ?node_target :quantity/:class ?product_model .
+        ?product_model a :Product .
+    }
 
     # Exclude aggregated entities
     MINUS { ?entity_target a :AggregatedEntity }
-
-    # Exclude nodes without common devices (empty intersection set)
-    { SELECT DISTINCT ?node_target ?node_source (count(distinct ?device) as ?intersection_size) {
-        ?node_source :device ?device .
-        ?node_target :device ?device .
-    } GROUP BY ?node_target ?node_source }
-
-    { SELECT DISTINCT ?node_source (count(distinct ?device) as ?source_size) {
-        ?node_source :device ?device .
-    } GROUP BY ?node_source}
 }
 ORDER BY ?time
