@@ -4,22 +4,29 @@ from pathlib import Path
 from networkx import DiGraph
 from rdflib import Graph, Variable
 from rdflib.plugins.sparql.processor import SPARQLResult
+from time import time
 from typing import Dict
 
 path_queries = Path(__file__).parent.parent.joinpath("sparql")
 
+logging.addLevelName(logging.INFO+1, "INFO (timing)")
 logger = logging.getLogger(__name__)
 
 
 def insert_DF_DP(g: Graph) -> Graph:
+    start_time = time()
     with open(path_queries.joinpath("insert_DF+DP_aggregated_entity.ru")) as f:
         g.update(f.read())
+    logger.log(logging.INFO+1, "Insert_DF_DP: %.2f s", time() - start_time)
+
     return g
 
 
 def check_quantities(g: Graph) -> SPARQLResult:
+    start_time = time()
     with open(path_queries.joinpath("check_amount_in_vs_out.rq")) as f:
         r = g.query(f.read())
+    logger.log(logging.INFO+1, "check_quantities: %.2f s", time() - start_time)
 
     if not all([b[Variable("equal")].toPython() for b in r.bindings]):
         logging.warning("Not all nodes have incoming amount equal to outgoing amount!")
@@ -28,8 +35,11 @@ def check_quantities(g: Graph) -> SPARQLResult:
 
 
 def insert_fractions(g: Graph) -> Graph:
+    start_time = time()
     with open(path_queries.joinpath("insert_quantity_fraction.ru")) as f:
         g.update(f.read())
+    logger.log(logging.INFO+1, "insert_fractions: %.2f s", time() - start_time)
+
     return g
 
 
@@ -42,6 +52,7 @@ def get_attributes(b: dict, t: str) -> Dict[str, str]:
 
 
 def generate_networkx_di_graph(g: Graph) -> DiGraph:
+    start_time = time()
     nx_graph = DiGraph()
 
     with open(path_queries.joinpath("select_nodes.rq")) as f:
@@ -61,5 +72,6 @@ def generate_networkx_di_graph(g: Graph) -> DiGraph:
             b[Variable("nodeTarget")],
             **get_attributes(b, "edge"),
         )
+    logger.log(logging.INFO+1, "generate_networkx_di_graph: %.2f s", time() - start_time)
 
     return nx_graph

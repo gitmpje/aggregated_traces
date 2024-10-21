@@ -1,21 +1,34 @@
 import logging
 
-from networkx import DiGraph, path_graph
+from networkx import DiGraph, get_node_attributes, path_graph
 from networkx.algorithms.simple_paths import all_simple_paths
 from pandas import DataFrame
 from pathlib import Path
 from rdflib import Graph, Literal, Namespace, URIRef, Variable
-from typing import List, Tuple
+from time import time
+from typing import List, Optional, Tuple
 
+logging.addLevelName(logging.INFO + 1, "INFO (timing)")
 logger = logging.getLogger(__name__)
 
 path_queries = Path(__file__).parent.parent.joinpath("sparql")
 
+EKG = Namespace("http://example.org/def/ekg/aggregated_traces/")
 EKG_ID = Namespace("http://example.org/id/ekg/aggregated_traces/")
 EDGE_TYPE_MAPPING = {
-    "urn:ekg:directlyFollows": "http://example.org/def/ekg/aggregated_traces/DirectlyFollows",
-    "urn:ekg:directlyPrecedes": "http://example.org/def/ekg/aggregated_traces/DirectlyPrecedes",
+    URIRef("urn:ekg:directlyFollows"): EKG.DirectlyFollows,
+    URIRef("urn:ekg:directlyPrecedes"): EKG.DirectlyPrecedes,
 }
+
+
+def get_graph_trace_type(graph: DiGraph, relation_type: URIRef) -> DiGraph:
+    return graph.edge_subgraph(
+        [
+            (u, v)
+            for u, v, d in graph.edges(data=True)
+            if d["type"] == relation_type.toPython()
+        ]
+    )
 
 
 def remove_subsets(lists: List[list]) -> List[list]:
@@ -26,6 +39,19 @@ def remove_subsets(lists: List[list]) -> List[list]:
             elif set(l1).issubset(set(l2)):
                 lists.remove(l1)
     return lists
+
+
+def get_paths(graph: DiGraph, source: URIRef, target: URIRef) -> list:
+    simple_paths = all_simple_paths(
+        graph,
+        source=source,
+        target=target,
+    )
+
+    # Remove completely overlapping paths
+    paths = remove_subsets([p for p in simple_paths])
+
+    return paths
 
 
 def compute_trace_probabilities(
@@ -40,6 +66,7 @@ def compute_trace_probabilities(
     `custom_target_query`: should return at least variables `node_source`, `node_target`, and `g` [<urn:ekg:directlyFollows>, <urn:ekg:directlyPrecedes>]
     Either `source_entities` or `custom_target_query` is expected to specified for the function to work properly.
     """
+    start_time = time()
 
     # Load SPARQL query
     if not custom_target_query:
@@ -95,25 +122,16 @@ def compute_trace_probabilities(
             continue
 
         p = 0
-        trace_graph_selected = nx_trace_graph.edge_subgraph(
-            [
-                (u, v)
-                for u, v, d in nx_trace_graph.edges(data=True)
-                if d["type"] == EDGE_TYPE_MAPPING[b[Variable("g")].toPython()]
-            ]
+        trace_graph_selected = get_graph_trace_type(
+            nx_trace_graph, EDGE_TYPE_MAPPING[b[Variable("g")]]
         )
 
-        # Remove completely overlapping paths
-        paths = remove_subsets(
-            [
-                p
-                for p in all_simple_paths(
-                    trace_graph_selected,
-                    source=b[Variable("node_source")],
-                    target=b[Variable("node_target")],
-                )
-            ]
+        paths = get_paths(
+            graph=trace_graph_selected,
+            source=b[Variable("node_source")],
+            target=b[Variable("node_target")],
         )
+
         for path in paths:
             path_graph_ = path_graph(path)
             all_paths_edges.extend(path_graph_.edges())
@@ -151,9 +169,48 @@ def compute_trace_probabilities(
     # Construct DataFrame
     df = DataFrame(records)
 
-    # Replace URIs with prefix
-    for c in df.columns:
-        if isinstance(df[c].iloc[0], URIRef):
-            df[c] = df[c].str.replace(EKG_ID, "ekg_id:")
+    logger.log(
+        logging.INFO + 1, "compute_trace_probabilities: %.2f s", time() - start_time
+    )
 
     return df, all_paths_edges
+
+
+def compute_number_of_merges_in_trace_graph(
+    trace_graph: DiGraph,
+    source: Optional[URIRef] = None,
+    target: Optional[URIRef] = None,
+    backward: Optional[bool] = True,
+) -> int:
+    """
+    Returns the number of merges found in the provided graph.
+    A merge is a Aggregation node/event with more than one incoming directly follows relation.
+    """
+    start_time = time()
+    if backward:
+        trace_graph_selected = get_graph_trace_type(trace_graph, EKG.DirectlyPrecedes)
+    else:
+        trace_graph_selected = get_graph_trace_type(trace_graph, EKG.DirectlyFollows)
+
+    if source and target:
+        paths = get_paths(graph=trace_graph_selected, source=source, target=target)
+        path_graph = trace_graph.subgraph(
+            nodes=[node for path in paths for node in path]
+        )
+    else:
+        path_graph = trace_graph
+
+    aggregation_nodes = [
+        n
+        for n, v in get_node_attributes(path_graph, "types").items()
+        if v == "http://example.org/def/ekg/aggregated_traces/Aggregation"
+    ]
+
+    logger.log(
+        logging.INFO + 1,
+        "compute_number_of_merges_in_trace_graph: %.2f s",
+        time() - start_time,
+    )
+
+    trace_graph_DF = get_graph_trace_type(path_graph, EKG.DirectlyFollows)
+    return len([n for n in aggregation_nodes if trace_graph_DF.in_degree(n) > 1])

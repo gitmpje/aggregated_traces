@@ -4,6 +4,10 @@ import networkx as nx
 
 from matplotlib.lines import Line2D
 from typing import List
+from time import time
+
+logging.addLevelName(logging.INFO+1, "INFO (timing)")
+logger = logging.getLogger(__name__)
 
 
 def generate_graph_visualization(
@@ -12,6 +16,7 @@ def generate_graph_visualization(
     edges_backward: List[tuple] = [],
     edges_forward: List[tuple] = [],
 ) -> plt.Figure:
+
     # General settings
     font_size = 20
     node_size = 800
@@ -29,6 +34,8 @@ def generate_graph_visualization(
         "http://example.org/def/ekg/aggregated_traces/Transformation": "yellow",
         "other": "white",
     }
+
+    start_time = time()
 
     # Create figure
     plt.figure(figsize=(100, 50))
@@ -178,5 +185,7 @@ def generate_graph_visualization(
             )
         else:
             plt.savefig(f"{base_figure_path}.svg")
+
+    logger.log(logging.INFO+1, "compute_trace_probabilities: %.2f s", time() - start_time)
 
     return fig
