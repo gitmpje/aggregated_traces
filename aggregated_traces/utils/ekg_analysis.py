@@ -1,7 +1,7 @@
 import logging
 
-from networkx import DiGraph, get_node_attributes, path_graph
-from networkx.algorithms.simple_paths import all_simple_paths
+from networkx import MultiDiGraph, get_node_attributes
+from networkx.algorithms.simple_paths import all_simple_edge_paths
 from pandas import DataFrame
 from pathlib import Path
 from rdflib import Graph, Literal, Namespace, URIRef, Variable
@@ -21,11 +21,11 @@ EDGE_TYPE_MAPPING = {
 }
 
 
-def get_graph_trace_type(graph: DiGraph, relation_type: URIRef) -> DiGraph:
+def get_graph_trace_type(graph: MultiDiGraph, relation_type: URIRef) -> MultiDiGraph:
     return graph.edge_subgraph(
         [
-            (u, v)
-            for u, v, d in graph.edges(data=True)
+            (u, v, key)
+            for u, v, key, d in graph.edges(data=True, keys=True)
             if d["type"] == relation_type.toPython()
         ]
     )
@@ -41,22 +41,22 @@ def remove_subsets(lists: List[list]) -> List[list]:
     return lists
 
 
-def get_paths(graph: DiGraph, source: URIRef, target: URIRef) -> list:
-    simple_paths = all_simple_paths(
+def get_edge_paths(graph: MultiDiGraph, source: URIRef, target: URIRef) -> List[tuple]:
+    simple_edge_paths = all_simple_edge_paths(
         graph,
         source=source,
         target=target,
     )
 
     # Remove completely overlapping paths
-    paths = remove_subsets([p for p in simple_paths])
+    edge_paths = remove_subsets([p for p in simple_edge_paths])
 
-    return paths
+    return edge_paths
 
 
 def compute_trace_probabilities(
     rdf_trace_graph: Graph,
-    nx_trace_graph: DiGraph,
+    nx_trace_graph: MultiDiGraph,
     source_entities: List[URIRef] = [],
     source_entities_time: List[Tuple[URIRef, Tuple[Literal]]] = [],
     trace_backward: bool = True,
@@ -98,13 +98,12 @@ def compute_trace_probabilities(
     # Run SPARQL query to retrieve source-target node pairs
     query_result = rdf_trace_graph.query(target_query)
 
-    logger.debug(query_result.serialize(format="txt").decode())
-
     # Raise exception if no nodes can be found in the backward trace that match the given constraints
-    if not query_result.bindings:
+    if not hasattr(query_result, "bindings"):
         raise RuntimeError(
             "No target nodes found for given source entities and constraints!"
         )
+    logger.debug(query_result.serialize(format="txt").decode())
 
     if (Variable("flag_in_window") in query_result.vars) and not any(
         b.get(Variable("flag_in_window")) for b in query_result.bindings
@@ -126,29 +125,34 @@ def compute_trace_probabilities(
             nx_trace_graph, EDGE_TYPE_MAPPING[b[Variable("g")]]
         )
 
-        paths = get_paths(
+        edge_paths = get_edge_paths(
             graph=trace_graph_selected,
             source=b[Variable("node_source")],
             target=b[Variable("node_target")],
         )
 
-        for path in paths:
-            path_graph_ = path_graph(path)
-            all_paths_edges.extend(path_graph_.edges())
+        for edge_path in edge_paths:
+            all_paths_edges.extend(edge_path)
 
             p_path = 1
-            for edge in path_graph_.edges():
-                # if trace_graph.get_edge_data(*edge).get("fraction", 1) != 1:
-                #     print(edge[0], nx_graph.get_edge_data(*edge).get("fraction", 1))
-                # print(edge, trace_graph_selected.get_edge_data(*edge).get(edge_label_key))
-                p_path *= trace_graph_selected.get_edge_data(*edge).get("fraction", 1)
+            debug_labels = []
+            for edge in edge_path:
+                p_edge = trace_graph_selected.get_edge_data(*edge).get("fraction", 1)
+                if p_edge != 1.0:
+                    debug_labels.append(
+                        trace_graph_selected.get_edge_data(*edge).get(
+                            "amountEntityFraction"
+                        )
+                    )
+                p_path *= p_edge
 
             logger.debug(
-                " %s: path %s - probability %s"
+                " %s: path %s - probability %s (%s)"
                 % (
                     b.get(Variable("entity_source")),
-                    [n.toPython().split("/")[-1] for n in path],
+                    [f"{edge[0].toPython().split('/')[-1]}-{edge[1].toPython().split('/')[-1]}" for edge in edge_path],
                     p_path,
+                    debug_labels,
                 )
             )
 
@@ -177,7 +181,7 @@ def compute_trace_probabilities(
 
 
 def compute_number_of_merges_in_trace_graph(
-    trace_graph: DiGraph,
+    trace_graph: MultiDiGraph,
     source: Optional[URIRef] = None,
     target: Optional[URIRef] = None,
     backward: Optional[bool] = True,
@@ -193,10 +197,14 @@ def compute_number_of_merges_in_trace_graph(
         trace_graph_selected = get_graph_trace_type(trace_graph, EKG.DirectlyFollows)
 
     if source and target:
-        paths = get_paths(graph=trace_graph_selected, source=source, target=target)
-        path_graph = trace_graph.subgraph(
-            nodes=[node for path in paths for node in path]
+        edge_paths = get_edge_paths(
+            graph=trace_graph_selected, source=source, target=target
         )
+        nodes = []
+        for path in edge_paths:
+            for edge in path:
+                nodes.extend([edge[0], edge[1]])
+        path_graph = trace_graph.subgraph(nodes=nodes)
     else:
         path_graph = trace_graph
 

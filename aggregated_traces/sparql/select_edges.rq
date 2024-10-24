@@ -1,6 +1,7 @@
 PREFIX : <http://example.org/def/ekg/aggregated_traces/>
 
 SELECT DISTINCT
+  ?Relation
   ?nodeSource
   ?nodeTarget
   (str(?type) as ?edge_type)

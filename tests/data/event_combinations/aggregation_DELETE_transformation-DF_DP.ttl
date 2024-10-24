@@ -10,7 +10,8 @@
         <Lot2> ;
     :childQuantity <1/childQuantity1>,
         <1/childQuantity2> ;
-    :timestamp 1 .
+    :timestamp 1 ;
+    :directlyFollows <2> .
 
 <1/childQuantity1> :amount 5 ;
     :class <Lot1>,
@@ -24,7 +25,8 @@
     :inputQuantity <2/inputQuantity1>,
         <2/inputQuantity2> ;
     :outputQuantity <2/outputQuantity> ;
-    :timestamp 2 .
+    :timestamp 2 ;
+    :directlyPrecedes <1> .
 
 <2/inputQuantity1> :amount 5 ;
     :class <Lot1>,

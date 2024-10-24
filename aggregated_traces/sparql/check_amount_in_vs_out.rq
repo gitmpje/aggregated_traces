@@ -1,6 +1,5 @@
 PREFIX : <http://example.org/def/ekg/aggregated_traces/>
 
-#TODO: distinguish by type of material (contained in the aggregated entity)
 SELECT DISTINCT
   ?event
   ?type

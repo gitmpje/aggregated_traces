@@ -11,7 +11,8 @@
     :entity <Lot0> ;
     :location <DB1> ;
     :quantity <20/quantity> ;
-    :timestamp 2.593123e+00 .
+    :timestamp 2.593123e+00 ;
+    :directlyFollows <65> .
 
 <20/quantity> :amount 3 ;
     :class <Lot0>,
@@ -24,7 +25,9 @@
     :entity <Lot0_0> ;
     :location <WB1> ;
     :quantity <100/quantity> ;
-    :timestamp 6.402289e+00 .
+    :timestamp 6.402289e+00;
+    :directlyFollows <110> ;
+    :directlyPrecedes <87>  .
 
 <100/quantity> :amount 2 ;
     :class <Lot0_0>,
@@ -37,7 +40,9 @@
     :entity <Lot0_0> ;
     :location <WB1> ;
     :quantity <110/quantity> ;
-    :timestamp 6.616829e+00 .
+    :timestamp 6.616829e+00 ;
+    :directlyFollows <124> ;
+    :directlyPrecedes <100> .
 
 <110/quantity> :amount 2 ;
     :class <Lot0_0>,
@@ -49,7 +54,9 @@
     :entity <Lot0_1> ;
     :location <WB2> ;
     :quantity <119/quantity> ;
-    :timestamp 1.026999e+01 .
+    :timestamp 1.026999e+01 ;
+    :directlyFollows <140> ;
+    :directlyPrecedes <87> .
 
 <119/quantity> :amount 1 ;
     :class <Lot0_1>,
@@ -61,7 +68,9 @@
     :entity <Lot0_1> ;
     :location <WB2> ;
     :quantity <140/quantity> ;
-    :timestamp 1.266245e+01 .
+    :timestamp 1.266245e+01 ;
+    :directlyFollows <144> ;
+    :directlyPrecedes <119> .
 
 <140/quantity> :amount 1 ;
     :class <Lot0_1>,
@@ -74,7 +83,9 @@
         <144/inputQuantity2> ;
     :location <WB2> ;
     :outputQuantity <144/outputQuantity> ;
-    :timestamp 1.266345e+01 .
+    :timestamp 1.266345e+01 ;
+    :directlyFollows <150> ;
+    :directlyPrecedes <140> .
 
 <144/inputQuantity1> :amount 1 ;
     :class <WBM1_1>,
@@ -98,7 +109,8 @@
     :device <Lot0_Device0>,
         <Lot0_Device2> ;
     :parentEntity <Lot0_1_Pack0> ;
-    :timestamp 1.276345e+01 .
+    :timestamp 1.276345e+01 ;
+    :directlyPrecedes <124>, <144> .
 
 <150/childQuantity1> :amount 1 ;
     :class <Lot0_1>,
@@ -116,7 +128,9 @@
     :entity <Lot0> ;
     :location <DB1> ;
     :quantity <65/quantity> ;
-    :timestamp 2.910227e+00 .
+    :timestamp 2.910227e+00 ;
+    :directlyFollows <79> ;
+    :directlyPrecedes <20> .
 
 <65/quantity> :amount 3 ;
     :class <Lot0>,
@@ -132,7 +146,9 @@
         <79/inputQuantity3> ;
     :location <DB1> ;
     :outputQuantity <79/outputQuantity> ;
-    :timestamp 2.911227e+00 .
+    :timestamp 2.911227e+00 ;
+    :directlyFollows <87> ;
+    :directlyPrecedes <65> .
 
 <79/inputQuantity1> :amount 2 ;
     :class <DBM_2>,
@@ -158,7 +174,9 @@
         <124/inputQuantity2> ;
     :location <WB1> ;
     :outputQuantity <124/outputQuantity> ;
-    :timestamp 6.617829e+00 .
+    :timestamp 6.617829e+00 ;
+    :directlyFollows <150> ;
+    :directlyPrecedes <110> .
 
 <124/inputQuantity1> :amount 2 ;
     :class <WBM1_0>,
@@ -179,7 +197,9 @@
     :childQuantity <87/childQuantity1>,
         <87/childQuantity2> ;
     :parentEntity <Lot0> ;
-    :timestamp 3.011227e+00 .
+    :timestamp 3.011227e+00 ;
+    :directlyFollows <119>, <100> ;
+    :directlyPrecedes <79> .
 
 <87/childQuantity1> :amount 1 ;
     :class <Lot0_1>,

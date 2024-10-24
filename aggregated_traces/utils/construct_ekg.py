@@ -1,8 +1,8 @@
 import logging
 
 from pathlib import Path
-from networkx import DiGraph
-from rdflib import Graph, Variable
+from networkx import MultiDiGraph
+from rdflib import ConjunctiveGraph, Graph, Variable
 from rdflib.plugins.sparql.processor import SPARQLResult
 from time import time
 from typing import Dict
@@ -13,11 +13,27 @@ logging.addLevelName(logging.INFO+1, "INFO (timing)")
 logger = logging.getLogger(__name__)
 
 
+def load_rdf_graph(file: str|Path) -> ConjunctiveGraph:
+    start_time = time()
+
+    graph = ConjunctiveGraph()
+    graph.parse(file)
+
+    logger.log(logging.INFO+1, "load_rdf_graph: %.2f s", time() - start_time)
+
+    return graph
+
+
 def insert_DF_DP(g: Graph) -> Graph:
     start_time = time()
     with open(path_queries.joinpath("insert_DF+DP_aggregated_entity.ru")) as f:
         g.update(f.read())
-    logger.log(logging.INFO+1, "Insert_DF_DP: %.2f s", time() - start_time)
+    logger.log(logging.INFO+1, "Insert_DF_DP - direct relation: %.2f s", time() - start_time)
+
+    start_time = time()
+    with open(path_queries.joinpath("insert_DF+DP_qualified_relation.ru")) as f:
+        g.update(f.read())
+    logger.log(logging.INFO+1, "Insert_DF_DP - qualified relation: %.2f s", time() - start_time)
 
     return g
 
@@ -26,10 +42,11 @@ def check_quantities(g: Graph) -> SPARQLResult:
     start_time = time()
     with open(path_queries.joinpath("check_amount_in_vs_out.rq")) as f:
         r = g.query(f.read())
-    logger.log(logging.INFO+1, "check_quantities: %.2f s", time() - start_time)
 
     if not all([b[Variable("equal")].toPython() for b in r.bindings]):
         logging.warning("Not all nodes have incoming amount equal to outgoing amount!")
+
+    logger.log(logging.INFO+1, "check_quantities: %.2f s", time() - start_time)
 
     return r
 
@@ -51,9 +68,9 @@ def get_attributes(b: dict, t: str) -> Dict[str, str]:
     }
 
 
-def generate_networkx_di_graph(g: Graph) -> DiGraph:
+def generate_networkx_di_graph(g: Graph) -> MultiDiGraph:
     start_time = time()
-    nx_graph = DiGraph()
+    nx_graph = MultiDiGraph()
 
     with open(path_queries.joinpath("select_nodes.rq")) as f:
         query_nodes = f.read()
@@ -68,8 +85,9 @@ def generate_networkx_di_graph(g: Graph) -> DiGraph:
     r = g.query(query_edges)
     for b in r.bindings:
         nx_graph.add_edge(
-            b[Variable("nodeSource")],
-            b[Variable("nodeTarget")],
+            u_for_edge=b[Variable("nodeSource")],
+            v_for_edge=b[Variable("nodeTarget")],
+            key=b[Variable("Relation")],
             **get_attributes(b, "edge"),
         )
     logger.log(logging.INFO+1, "generate_networkx_di_graph: %.2f s", time() - start_time)

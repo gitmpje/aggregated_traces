@@ -6,7 +6,8 @@
 <1> a :Object ;
     :entity <Lot0> ;
     :quantity <1/quantity> ;
-    :timestamp 1 .
+    :timestamp 1 ;
+    :directlyFollows <3> .
 
 <1/quantity> :amount 5 ;
     :class <Lot0>,
@@ -15,7 +16,8 @@
 <2> a :Object ;
     :entity <Lot1> ;
     :quantity <2/quantity> ;
-    :timestamp 2 .
+    :timestamp 2 ;
+    :directlyFollows <3> .
 
 <2/quantity> :amount 5 ;
     :class <Lot1>,
@@ -25,7 +27,8 @@
     :inputQuantity <3/inputQuantity1>,
         <3/inputQuantity2> ;
     :outputQuantity <3/outputQuantity> ;
-    :timestamp 3 .
+    :timestamp 3 ;
+    :directlyPrecedes <1>, <2> .
 
 <3/inputQuantity1> :amount 5 ;
     :class <Lot0>,

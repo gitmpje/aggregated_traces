@@ -6,7 +6,7 @@ from matplotlib.lines import Line2D
 from typing import List
 from time import time
 
-logging.addLevelName(logging.INFO+1, "INFO (timing)")
+logging.addLevelName(logging.INFO + 1, "INFO (timing)")
 logger = logging.getLogger(__name__)
 
 
@@ -16,7 +16,6 @@ def generate_graph_visualization(
     edges_backward: List[tuple] = [],
     edges_forward: List[tuple] = [],
 ) -> plt.Figure:
-
     # General settings
     font_size = 20
     node_size = 800
@@ -42,8 +41,8 @@ def generate_graph_visualization(
 
     # Create layout using graphviz (using edges in one direction to get a tree structure)
     edges_df = [
-        (e_s, e_t)
-        for e_s, e_t, t in graph.edges(data="type")
+        (e_s, e_t, key)
+        for e_s, e_t, key, t in graph.edges(data="type", keys=True)
         if t == "http://example.org/def/ekg/aggregated_traces/DirectlyFollows"
     ]
     graph_df = nx.edge_subgraph(graph, edges_df)
@@ -112,21 +111,28 @@ def generate_graph_visualization(
     )
 
     edge_labels = dict()
-    for u, v, d in graph.edges(data=True):
+    for u, v, key, d in graph.edges(data=True, keys=True):
+        label = d[edge_label_key]
+        inverse_label = "\n".join(
+            [edge[edge_label_key] for edge in graph.get_edge_data(u=v, v=u).values()]
+        )
+
         if _pos[u][0] > _pos[v][0]:
             edge_labels[
                 (
                     u,
                     v,
+                    key,
                 )
-            ] = f"{d[edge_label_key]}\n\n{graph.edges[(v,u)][edge_label_key]}"
+            ] = f"{label}\n\n{inverse_label}"
         elif _pos[u][1] < _pos[v][1]:
             edge_labels[
                 (
                     u,
                     v,
+                    key,
                 )
-            ] = f"{graph.edges[(v,u)][edge_label_key]}\n\n{d[edge_label_key]}"
+            ] = f"{inverse_label}\n\n{label}"
 
     fig = nx.draw_networkx_edge_labels(
         graph,
@@ -186,6 +192,8 @@ def generate_graph_visualization(
         else:
             plt.savefig(f"{base_figure_path}.svg")
 
-    logger.log(logging.INFO+1, "compute_trace_probabilities: %.2f s", time() - start_time)
+    logger.log(
+        logging.INFO + 1, "compute_trace_probabilities: %.2f s", time() - start_time
+    )
 
     return fig
