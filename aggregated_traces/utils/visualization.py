@@ -1,13 +1,25 @@
+# Possibly implement more interactive visualizations using
+# Bokeh https://docs.bokeh.org/en/latest/docs/user_guide/topics/graph.html
+
 import logging
 import matplotlib.pyplot as plt
 import networkx as nx
 
-from matplotlib.lines import Line2D
 from typing import List
 from time import time
 
 logging.addLevelName(logging.INFO + 1, "INFO (timing)")
 logger = logging.getLogger(__name__)
+
+NODE_LABEL_KEY = "entitiesLocationTime"
+EDGE_LABEL_KEY = "amountEntityFraction"
+
+NODE_LINEWIDTH_DICT = {"packing": 2}
+NODE_COLOR_DICT = {
+    "http://example.org/def/ekg/aggregated_traces/Aggregation": "orange",
+    "http://example.org/def/ekg/aggregated_traces/Transformation": "yellow",
+    "other": "white",
+}
 
 
 def generate_graph_visualization(
@@ -16,184 +28,61 @@ def generate_graph_visualization(
     edges_backward: List[tuple] = [],
     edges_forward: List[tuple] = [],
 ) -> plt.Figure:
-    # General settings
-    font_size = 20
-    node_size = 800
-    arrowsize = node_size / 20
-    arc_rad = 0.25
-    edge_width = 1
-
-    node_label_key = "entitiesLocationTime"
-    edge_label_key = "amountEntityFraction"
-
-    node_linewidth_dict = {"packing": 2}
-    # edge_style_dict = {}
-    node_color_dict = {
-        "http://example.org/def/ekg/aggregated_traces/Aggregation": "orange",
-        "http://example.org/def/ekg/aggregated_traces/Transformation": "yellow",
-        "other": "white",
-    }
-
     start_time = time()
 
-    # Create figure
-    plt.figure(figsize=(100, 50))
+    # Node visual attributes
+    for node in graph.nodes(data=True):
+        node_attributes = node[1]
+        node_attributes_visual = {
+            "style": "filled",
+            "fillcolor": NODE_COLOR_DICT.get(node_attributes["types"], "white"),
+            "tooltip": node_attributes[NODE_LABEL_KEY],
+            "penwidth": NODE_LINEWIDTH_DICT.get(node_attributes["bizStep"], 1),
+        }
 
-    # Create layout using graphviz (using edges in one direction to get a tree structure)
-    edges_df = [
-        (e_s, e_t, key)
-        for e_s, e_t, key, t in graph.edges(data="type", keys=True)
-        if t == "http://example.org/def/ekg/aggregated_traces/DirectlyFollows"
-    ]
-    graph_df = nx.edge_subgraph(graph, edges_df)
+        node_attributes.update(node_attributes_visual)
 
-    _pos = nx.drawing.nx_agraph.graphviz_layout(graph_df, prog="dot")
+    # Edge visual attributes
+    for edge in graph.edges(data=True):
+        edge_attributes = edge[2]
+        edge_attributes_visual = {
+            "tooltip": edge_attributes[EDGE_LABEL_KEY],
+            "color": "red"
+            if edge[:2] in edges_backward
+            else "orange"
+            if edge[:2] in edges_forward
+            else "black",
+        }
+        if (
+            edge_attributes["type"]
+            != "http://example.org/def/ekg/aggregated_traces/DirectlyFollows"
+        ):
+            edge_attributes_visual["constraint"] = False
 
-    # Add nodes
-    node_colors = [
-        node_color_dict.get(o, "white")
-        for o in nx.get_node_attributes(graph, "types").values()
-    ]
-    node_linewidths = [
-        node_linewidth_dict.get(v, 1)
-        for v in nx.get_node_attributes(graph, "bizStep").values()
-    ]
-    fig = nx.draw_networkx_nodes(
-        graph,
-        pos=_pos,
-        node_shape="s",
-        node_size=node_size,
-        node_color=node_colors,
-        linewidths=node_linewidths,
-        edgecolors=["black"] * len(graph.nodes()),
-    )
+        edge_attributes.update(edge_attributes_visual)
 
-    node_labels = {
-        n: f"{d['label']}: {d[node_label_key]}" for n, d in graph.nodes(data=True)
-    }
-    fig = nx.draw_networkx_labels(
-        graph,
-        pos=_pos,
-        labels=node_labels,
-        verticalalignment="top",
-        font_size=font_size,
-    )
+    # Conver to PyGraphviz AGraph
+    agraph = nx.nx_agraph.to_agraph(graph)
 
-    # Add edges
-    # edge_styles = [edge_style_dict[t] for t in nx.get_edge_attributes(graph, "type").values()]
-    fig = nx.draw_networkx_edges(
-        graph,
-        pos=_pos,
-        node_size=node_size,
-        width=edge_width,
-        arrowsize=arrowsize,
-        connectionstyle=f"arc3, rad = {arc_rad}",
-    )
+    # Legend
+    legend = agraph.add_subgraph(name="cluster_legend", label="Legend")
+    k_prev = None
+    for k, c in NODE_COLOR_DICT.items():
+        legend.add_node(k, label=k, fillcolor=c, style="filled")
 
-    # Color edges on paths
-    fig = nx.draw_networkx_edges(
-        graph,
-        pos=_pos,
-        edgelist=edges_backward,
-        node_size=node_size,
-        edge_color="red",
-        width=edge_width * 4,
-        connectionstyle=f"arc3, rad = {arc_rad}",
-    )
-    fig = nx.draw_networkx_edges(
-        graph,
-        pos=_pos,
-        edgelist=edges_forward,
-        node_size=node_size,
-        edge_color="orange",
-        width=edge_width * 4,
-        connectionstyle=f"arc3, rad = {arc_rad}",
-    )
-
-    edge_labels = dict()
-    for u, v, key, d in graph.edges(data=True, keys=True):
-        label = d[edge_label_key]
-        inverse_label = "\n".join(
-            [edge[edge_label_key] for edge in graph.get_edge_data(u=v, v=u).values()]
-        )
-
-        if _pos[u][0] > _pos[v][0]:
-            edge_labels[
-                (
-                    u,
-                    v,
-                    key,
-                )
-            ] = f"{label}\n\n{inverse_label}"
-        elif _pos[u][1] < _pos[v][1]:
-            edge_labels[
-                (
-                    u,
-                    v,
-                    key,
-                )
-            ] = f"{inverse_label}\n\n{label}"
-
-    fig = nx.draw_networkx_edge_labels(
-        graph,
-        pos=_pos,
-        edge_labels=edge_labels,
-        font_size=font_size,
-        # rotate=False
-    )
-
-    # Add legend
-    legend_elements = {
-        k: Line2D(
-            [0],
-            [0],
-            marker="s",
-            markersize=20,
-            markeredgewidth=1,
-            markeredgecolor="black",
-            linewidth=0,
-            color=c,
-        )
-        for k, c in node_color_dict.items()
-    }
-    if edges_backward or edges_forward:
-        legend_elements.update(
-            {
-                "backward": Line2D(
-                    [0],
-                    [0],
-                    linewidth=edge_width * 4,
-                    color="red",
-                ),
-                "forward": Line2D(
-                    [0],
-                    [0],
-                    linewidth=edge_width * 4,
-                    color="orange",
-                ),
-            }
-        )
-
-    plt.legend(
-        legend_elements.values(),
-        legend_elements.keys(),
-        loc="upper left",
-        fontsize="medium",
-        labelspacing=2,
-    )
-
-    plt.rcParams.update({"text.usetex": False, "svg.fonttype": "none"})
+        # Add edge to place entries underneath each other
+        if k_prev:
+            legend.add_edge(k, k_prev, style="invis")
+        k_prev = k
 
     if base_figure_path:
         if edges_backward or edges_forward:
-            plt.savefig(
-                f"{base_figure_path}_paths.svg",
-            )
+            agraph.draw(f"{base_figure_path}_paths.svg", prog="dot")
         else:
-            plt.savefig(f"{base_figure_path}.svg")
+            agraph.draw(f"{base_figure_path}.svg", prog="dot")
 
     logger.log(
         logging.INFO + 1, "compute_trace_probabilities: %.2f s", time() - start_time
     )
 
-    return fig
+    return agraph
