@@ -1,12 +1,14 @@
 import logging
 
+from collections import defaultdict
 from networkx import MultiDiGraph, get_node_attributes
 from networkx.algorithms.simple_paths import all_simple_edge_paths
 from pandas import DataFrame
 from pathlib import Path
 from rdflib import Graph, Literal, Namespace, URIRef, Variable
+from scipy.stats import entropy
 from time import time
-from typing import List, Optional, Tuple
+from typing import Dict, List, Optional, Tuple
 
 logging.addLevelName(logging.INFO + 1, "INFO (timing)")
 logger = logging.getLogger(__name__)
@@ -202,6 +204,7 @@ def compute_number_of_merges_in_trace_graph(
 ) -> int:
     """
     Returns the number of merges found in the provided graph.
+    Optionally limited to the subgraph covering the paths between provided source and target node.
     A merge is a Aggregation node/event with more than one incoming directly follows relation.
     """
     start_time = time()
@@ -234,5 +237,171 @@ def compute_number_of_merges_in_trace_graph(
         time() - start_time,
     )
 
-    trace_graph_DF = get_graph_trace_type(path_graph, EKG.DirectlyFollows)
+    trace_graph_DF = get_graph_trace_type(trace_graph, EKG.DirectlyFollows)
+
     return len([n for n in aggregation_nodes if trace_graph_DF.in_degree(n) > 1])
+
+
+def compute_aggregation_uniformity(graph: Graph) -> Dict[URIRef, List[float]]:
+    """
+    For all split and merge aggregation events, calculate the uniformity of the aggregation.
+
+    Returns:
+        List[float]: list with KL divergence for each split/merge event.
+    """
+
+    results = graph.query(
+        """
+        PREFIX : <http://example.org/def/ekg/aggregated_traces/>
+        SELECT DISTINCT
+            ?Aggregation
+            (group_concat(?fraction) as ?fractions)
+        WHERE {
+            ?Aggregation a :Aggregation .
+            {
+                VALUES (?action ?RelationType ?p_direction) {
+                    ("DELETE" :DirectlyFollows :source)
+                    ("ADD" :DirectlyPrecedes :source)
+                }
+
+                ?Aggregation :action ?action .
+                [] a ?RelationType ;
+                    ?p_direction ?Aggregation ;
+                    :fraction ?fraction .
+
+                # Exclude packing events
+                MINUS { ?Aggregation :bizStep "packing" }
+            } UNION {
+                # Separately include 'split' due to packing
+                [] a :DirectlyFollows ;
+                    :source ?Aggregation ;
+                    :target/:bizStep "packing" ;
+                    :fraction ?fraction .
+            }
+        }
+        GROUP BY ?Aggregation ?RelationType
+            """
+    )
+
+    kl_div = defaultdict(list)
+    for binding in results.bindings:
+        fractions = binding.get(Variable("fractions"))
+        if not fractions:
+            continue
+
+        probabilities = [float(n) for n in fractions.split(" ")]
+
+        kl_div[binding[Variable("Aggregation")]].append(
+            entropy(pk=probabilities, qk=[1 / len(probabilities)] * len(probabilities))
+        )
+
+    return kl_div
+
+
+def compute_aggregation_average_kl_trace_graph(
+    trace_graph: MultiDiGraph,
+    aggregation_kl: Dict[URIRef, List[float]],
+    source: Optional[URIRef] = None,
+    target: Optional[URIRef] = None,
+    backward: Optional[bool] = True,
+) -> float:
+    """
+    Computes the average KL divergence for all aggregations in the trace graph.
+    Optionally limited to the subgraph covering the paths between provided source and target node.
+
+    Args:
+        trace_graph (MultiDiGraph): Networkx graph with traceability events.
+        aggregation_kl (Dict[URIRef, List[float]]): dictionary with the KL divergence for the aggregation nodes (events).
+        source (Optional[URIRef]): source node of the trace path(s) to include.
+        target (Optional[URIRef]): source node of the trace path(s) to include.
+        backward (Optional[bool]): whether to trace backward or forward.
+
+    Returns:
+        float: average KL divergence of all the aggregation nodes in the (selected) trace graph.
+    """
+    start_time = time()
+    if backward:
+        trace_graph_selected = get_graph_trace_type(trace_graph, EKG.DirectlyPrecedes)
+    else:
+        trace_graph_selected = get_graph_trace_type(trace_graph, EKG.DirectlyFollows)
+
+    if source and target:
+        edge_paths = get_edge_paths(
+            graph=trace_graph_selected, source=source, target=target
+        )
+        nodes = []
+        for path in edge_paths:
+            for edge in path:
+                nodes.extend([edge[0], edge[1]])
+        path_graph = trace_graph.subgraph(nodes=nodes)
+    else:
+        path_graph = trace_graph
+
+    aggregation_nodes = [
+        n
+        for n, v in get_node_attributes(path_graph, "types").items()
+        if v == "http://example.org/def/ekg/aggregated_traces/Aggregation"
+    ]
+
+    logger.log(
+        logging.INFO + 1,
+        "compute_aggregation_kl_trace_graph: %.2f s",
+        time() - start_time,
+    )
+
+    kls = []
+    for n in aggregation_nodes:
+        kls.extend(aggregation_kl[n])
+
+    if not kls:
+        return None
+    else:
+        return sum(kls) / len(kls)
+
+
+def compute_number_of_steps_at_aggregations(
+    graph: Graph, events: List[URIRef]
+) -> Dict[URIRef, List[int]]:
+    """
+    Computes the number of production steps that have been executed at all aggregations that are in the backward trace for the provided set of events.
+    The number of executed production steps is determined based on the product model related to the aggregation event.
+
+    Args:
+        graph (Graph): RDFlib graph with traceability events and DF/DP relations between events.
+        events (List[URIRef]): list of event URIs for which to find on the backward trace paths.
+
+    Returns:
+        Dict[URIRef, List[int]]: dictionary with number of steps executed at the different aggregation events for each event URI.
+    """
+
+    results = graph.query(
+        """
+PREFIX : <http://example.org/def/ekg/aggregated_traces/>
+SELECT ?event (group_concat(?productModel) as ?aggregation_productModels)
+WHERE {
+    {
+        SELECT DISTINCT ?event ?aggregation
+        WHERE {
+            ?event :directlyPrecedes+ ?aggregation .
+            ?aggregation a :Aggregation .
+        }
+    }
+    ?aggregation :childQuantity/:class ?_productModel .
+    ?_productModel a :Product .
+
+    BIND ( replace(str(?_productModel), ".+/([a-zA-Z0-9_-]+)$", "$1") as ?productModel )
+}
+GROUP BY ?event
+VALUES ?event {
+    %(values)s
+}
+"""
+        % {"values": "\n".join([event_node.n3() for event_node in events])}
+    )
+
+    return {
+        b[Variable("event")]: [
+            len(model.split("-")) for model in b.get(Variable("aggregation_productModels"), [])
+        ]
+        for b in results.bindings
+    }
