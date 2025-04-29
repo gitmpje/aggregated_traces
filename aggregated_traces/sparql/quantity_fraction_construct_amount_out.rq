@@ -1,0 +1,22 @@
+PREFIX : <http://example.org/def/ekg/aggregated_traces/>
+
+CONSTRUCT {
+  ?TempResult :relation ?relation ;
+    :product ?product ;
+    :amount_out ?amount_out .
+}
+WHERE {
+  # Get (outgoing) relations with amount
+  { SELECT ?relation ?product (sum(?amount) as ?amount_out) {
+    ?relation :amount ?amount ;
+      :class ?entity .
+    ?entity a :AggregatedEntity .
+
+    OPTIONAL {
+      ?relation :class ?product .
+      ?product a :Product .
+    }
+  } GROUP BY ?product ?relation }
+
+  BIND ( UUID() as ?TempResult )
+}

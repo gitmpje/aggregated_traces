@@ -1,0 +1,25 @@
+PREFIX : <http://example.org/def/ekg/aggregated_traces/>
+
+CONSTRUCT {
+  ?TempResult :event ?event ;
+    :product ?product ;
+    :sum_amount_out ?sum_amount_out .
+}
+WHERE {
+  # Get total amount outgoing amount for an event
+  { SELECT ?event ?type ?product (sum(?amount_out) as ?sum_amount_out) {
+    VALUES ?type { :DirectlyFollows_AggregatedEntity :DirectlyPrecedes_AggregatedEntity }
+    ?relation a ?type ;
+      :source ?event ;
+      :amount ?amount_out ;
+      :class ?entity .
+    ?entity a :AggregatedEntity .
+
+    OPTIONAL {
+      ?relation :class ?product .
+      ?product a :Product .
+    }
+  } GROUP BY ?event ?product ?type }
+
+  BIND ( UUID() as ?TempResult )
+}

@@ -28,10 +28,10 @@ WHERE {
   OPTIONAL {
     ?Relation :amount ?_edge_amount ;
       :class ?entity .
-    ?entity a :AggregatedEntity .
+    FILTER EXISTS { ?entity a :AggregatedEntity }
 
     OPTIONAL { ?entity rdfs:label ?_entity_label }
     BIND ( coalesce(?_entity_label, replace(str(?entity), ".+/([a-zA-Z0-9_]+)$", "$1")) as ?entity_label )
   }
 }
-GROUP BY ?Relation
+GROUP BY ?Relation ?type ?nodeSource ?nodeTarget

@@ -1,0 +1,17 @@
+BASE <http://example.org/id/ekg/aggregated_traces/>
+PREFIX : <http://example.org/def/ekg/aggregated_traces/>
+
+CONSTRUCT {
+  ?Event_t1 :directlyFollows ?Event_t2 .
+}
+WHERE {
+  ?Event_t1 :timestamp ?time_prevEvent ;
+    :entity|:parentEntity|:childEntity|
+          (:inputQuantity/:class) ?AggregatedEntity .
+
+  GRAPH ?g_temp {
+    [] :AggregatedEntity ?AggregatedEntity ;
+      :Event_t2 ?Event_t2 ;
+      :time_prevEvent ?time_prevEvent .
+  }
+}

@@ -1,0 +1,42 @@
+BASE <http://example.org/id/ekg/aggregated_traces/>
+PREFIX : <http://example.org/def/ekg/aggregated_traces/>
+
+CONSTRUCT {
+  ?TempResult :AggregatedEntity ?AggregatedEntity ;
+    :Event_t2 ?Event_t2 ;
+    :time_prevEvent ?time_prevEvent .
+}
+WHERE {
+  {
+    SELECT ?AggregatedEntity ?Event_t2 (max(?time_earlier) AS ?time_prevEvent)
+    WHERE {
+      ?Event_t2 :entity|:parentEntity|:childEntity|
+          (:inputQuantity/:class) ?AggregatedEntity ;
+        :timestamp ?time .
+
+      ?AggregatedEntity a :AggregatedEntity .
+
+      {
+        [] :entity|:parentEntity ?AggregatedEntity ;
+          :timestamp ?time_earlier .
+      } UNION {
+        # Only consider child entity for 'split' events
+        [] a :Aggregation ;
+          :action "DELETE" ;
+          :childEntity ?AggregatedEntity ;
+          :timestamp ?time_earlier .
+      } UNION {
+        # Only consider output entity for Transformation events
+        [] a :Transformation ;
+          :outputQuantity/:class ?AggregatedEntity ;
+          :timestamp ?time_earlier .
+      }
+      FILTER( ?time_earlier < ?time )
+
+      ?AggregatedEntity a :AggregatedEntity .
+    }
+    GROUP BY ?AggregatedEntity ?Event_t2
+  }
+
+  BIND ( UUID() as ?TempResult )
+}

@@ -4,9 +4,9 @@ SELECT DISTINCT
   ?node
   ?node_label
   (group_concat(distinct str(?node_type)) as ?node_types)
-  (coalesce(?bizStep, "") as ?node_bizStep)
-  (concat(group_concat(distinct ?entity_label), coalesce(concat(" @ ", ?location_label), ""), " - ", str(round(?time*1000)/1000)) as ?node_entitiesLocationTime)
-  (group_concat(distinct ?entity_type ; separator = ",") as ?node_entityTypes)
+  (group_concat(distinct coalesce(?bizStep, "")) as ?node_bizStep)
+  (concat(group_concat(distinct ?entity_label), coalesce(concat(" @ ", group_concat(distinct ?location_label)), ""), " - ", str(round(?time*1000)/1000)) as ?node_entitiesLocationTime)
+  (group_concat(distinct str(?entity_type) ; separator = ",") as ?node_entityTypes)
 WHERE {
   [] :source|:target ?node .
   ?node a ?node_type ;
@@ -28,4 +28,4 @@ WHERE {
   }
   BIND ( coalesce(?_location_label, replace(str(?location), ".+/([a-zA-Z0-9_]+)$", "$1")) as ?location_label )
 }
-GROUP BY ?node
+GROUP BY ?node ?node_label ?time

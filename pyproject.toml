@@ -1,11 +1,12 @@
-[tool.poetry]
+[project]
 name = "aggregated_traces"
 version = "0.0.1"
 authors = [
-  "Mark <m.c.a.v.d.pas@tue.nl>",
+  {name = "Mark", email = "m.c.a.v.d.pas@tue.nl"},
 ]
 description = "Package for working with Event Knowledge Graphs including aggregated entities"
 readme = "README.md"
+requires-python = ">=3.11"
 classifiers = [
     "Programming Language :: Python :: 3",
     "License :: OSI Approved :: MIT License",
@@ -24,6 +25,7 @@ networkx = "^3.3"
 pandas = "^2.2"
 pygraphviz = "^1.13"
 rdflib = "^7.0.0"
+oxrdflib = "^0.4.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^8.3"

@@ -1,0 +1,24 @@
+PREFIX : <http://example.org/def/ekg/aggregated_traces/>
+
+CONSTRUCT {
+  ?relation :fraction ?fraction .
+}
+WHERE {
+  GRAPH ?g {
+    ?relation a ?type ;
+      :source ?event .
+  }
+  [] :event ?event ;
+    :product ?product ;
+    :sum_amount_out ?sum_amount_out .
+
+  [] :relation ?relation ;
+    :product ?product ;
+    :amount_out ?amount_out .
+
+  ?event :sum_amount_out ?sum_amount_out .
+
+  # Calculate fraction for a DF/DP relation as the outgoing amount for this relation divided by the total outgoing amount for a node
+  # Take total outgoing amount, as quantity can change during transformation
+  BIND( coalesce(?amount_out/?sum_amount_out, 1) as ?fraction)
+}

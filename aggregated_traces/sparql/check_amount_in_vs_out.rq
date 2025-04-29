@@ -39,7 +39,7 @@ WHERE {
         :DirectlyFollows_AggregatedEntity
         :DirectlyPrecedes_AggregatedEntity
       }
-      _:relation a ?type ;
+      ?relation a ?type ;
         :source ?event ;
         :amount ?amount_out ;
         :class ?entity .
@@ -47,7 +47,7 @@ WHERE {
       ?entity a :AggregatedEntity .
 
       OPTIONAL {
-        _:relation :class ?product .
+        ?relation :class ?product .
         ?product a :Product .
       }
     }}
