@@ -25,6 +25,8 @@ pandas = "2.2"
 pygraphviz = "1.13"
 rdflib = "7.0.*"
 oxrdflib = "0.4.*"
+scipy = "1.15.*"
+seaborn = "0.13.*"
 
 [tool.poetry.dev-dependencies]
 pytest = "^8.3"
