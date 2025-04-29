@@ -22,12 +22,12 @@ dependencies = [
     "oxrdflib==0.4.*",
     "scipy>=1.17.1",
     "pydoe2>=1.3.0",
+    "seaborn>=0.13.2",
 ]
 
 [project.urls]
 Homepage = "https://github.com/gitmpje/aggregated_traces"
 Issues = "https://github.com/gitmpje/aggregated_traces/issues"
-
 
 [tool.poetry.dev-dependencies]
 pytest = "^8.3"
