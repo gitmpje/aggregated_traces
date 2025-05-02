@@ -16,8 +16,6 @@ WHERE {
     :product ?product ;
     :amount_out ?amount_out .
 
-  ?event :sum_amount_out ?sum_amount_out .
-
   # Calculate fraction for a DF/DP relation as the outgoing amount for this relation divided by the total outgoing amount for a node
   # Take total outgoing amount, as quantity can change during transformation
   BIND( coalesce(?amount_out/?sum_amount_out, 1) as ?fraction)

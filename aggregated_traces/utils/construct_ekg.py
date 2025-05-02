@@ -2,7 +2,7 @@ import logging
 
 from pathlib import Path
 from networkx import MultiDiGraph
-from rdflib import Dataset, Graph, URIRef, Variable
+from rdflib import Dataset, Graph, Variable
 from rdflib.plugins.sparql.processor import SPARQLResult
 from time import time
 from typing import Dict, Optional
@@ -53,9 +53,8 @@ def insert_DF_DP(g: Graph) -> Graph:
                 path_queries.joinpath(f"DF+DP_construct_{relation_name}.rq")
             ) as f:
                 r = g.query(f.read())
-            g_r = Graph(identifier=graph_id)
+            g_r = g.graph(identifier=graph_id)
             g_r.parse(data=r.graph.serialize())
-            g += g_r
 
         logger.log(
             logging.INFO + 1,
@@ -71,9 +70,8 @@ def insert_DF_DP(g: Graph) -> Graph:
                 )
             ) as f:
                 r = g.query(f.read())
-            g_r = Graph(identifier=graph_id)
+            g_r = g.graph(identifier=graph_id)
             g_r.parse(data=r.graph.serialize())
-            g += g_r
 
         logger.log(
             logging.INFO + 1,
@@ -123,15 +121,17 @@ def insert_fractions(g: Graph) -> Graph:
         with open(
             path_queries.joinpath("quantity_fraction_construct_amount_out.rq")
         ) as f:
-            g_temp = g.query(f.read())
-        g += g_temp
+            r = g.query(f.read())
+        g_r = g.graph(identifier="urn:ekg:quantity_fraction_construct_amount_out")
+        g_r.parse(data=r.graph.serialize())
 
         # Event sum amount out
         with open(
             path_queries.joinpath("quantity_fraction_construct_sum_amount_out.rq")
         ) as f:
-            g_temp = g.query(f.read())
-        g += g_temp
+            r = g.query(f.read())
+        g_r = g.graph(identifier="urn:ekg:quantity_fraction_construct_sum_amount_out")
+        g_r.parse(data=r.graph.serialize())
 
         # Fraction (per relation type)
         for relation_name, relation, graph_id in RELATION_GRAPH_ID:
@@ -139,9 +139,8 @@ def insert_fractions(g: Graph) -> Graph:
                 path_queries.joinpath("quantity_fraction_construct_fraction.rq")
             ) as f:
                 r = g.query(f.read().replace("?type", f"<{relation}>"))
-            g_r = Graph(identifier=graph_id)
+            g_r = g.graph(identifier=graph_id)
             g_r.parse(data=r.graph.serialize())
-            g += g_r
 
     else:
         with open(path_queries.joinpath("insert_quantity_fraction.ru")) as f:

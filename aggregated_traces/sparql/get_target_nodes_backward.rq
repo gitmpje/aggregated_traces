@@ -1,26 +1,21 @@
 PREFIX : <http://example.org/def/ekg/aggregated_traces/>
 
 SELECT DISTINCT
-    ?g
-    ?entity_source
-    ?node_source
-    ?entity_target
-    ?node_target
-    ?product_model
+  ?g
+  ?entity_source
+  ?node_source
+  ?entity_target
+  ?node_target
+  ?product_model
 WHERE {
-    ?node_source :parentEntity ?entity_source .
+  ?node_source :parentEntity ?entity_source .
 
-    # Use graph context to only traverse edges in one direction (DirectlyFollows or DirectlyPrecedes) 
-    GRAPH ?g { ?node_source (^:source/:target)+ ?node_target }
+  # Use graph context to only traverse edges in one direction (DirectlyFollows or DirectlyPrecedes) 
+  GRAPH ?g { ?node_source (^:source/:target)+ ?node_target }
 
-    ?node_target :bizStep "departing" ;
-        :location ?entity_target .
-    optional {
-        ?node_target :quantity/:class ?product_model .
-        ?product_model a :Product .
-    }
+  ?node_target :bizStep "departing" ;
+    :location ?entity_target .
 
-    # Exclude aggregated entities
-    MINUS { ?entity_target a :AggregatedEntity }
+  ?node_target :quantity/:class ?product_model .
+  ?product_model a :Product .
 }
-ORDER BY ?time

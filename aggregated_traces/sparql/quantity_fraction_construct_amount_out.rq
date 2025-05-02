@@ -8,7 +8,9 @@ CONSTRUCT {
 WHERE {
   # Get (outgoing) relations with amount
   { SELECT ?relation ?product (sum(?amount) as ?amount_out) {
-    ?relation :amount ?amount ;
+    VALUES ?type { :DirectlyFollows_AggregatedEntity :DirectlyPrecedes_AggregatedEntity }
+    ?relation a ?type ;
+      :amount ?amount ;
       :class ?entity .
     ?entity a :AggregatedEntity .
 
