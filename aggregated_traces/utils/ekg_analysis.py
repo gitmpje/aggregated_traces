@@ -251,36 +251,35 @@ def compute_aggregation_uniformity(graph: Graph) -> Dict[URIRef, List[float]]:
     """
 
     results = graph.query(
-        """
-        PREFIX : <http://example.org/def/ekg/aggregated_traces/>
-        SELECT DISTINCT
-            ?Aggregation
-            (group_concat(?fraction) as ?fractions)
-        WHERE {
-            ?Aggregation a :Aggregation .
-            {
-                VALUES (?action ?RelationType ?p_direction) {
-                    ("DELETE" :DirectlyFollows :source)
-                    ("ADD" :DirectlyPrecedes :source)
-                }
-
-                ?Aggregation :action ?action .
-                [] a ?RelationType ;
-                    ?p_direction ?Aggregation ;
-                    :fraction ?fraction .
-
-                # Exclude packing events
-                MINUS { ?Aggregation :bizStep "packing" }
-            } UNION {
-                # Separately include 'split' due to packing
-                [] a :DirectlyFollows ;
-                    :source ?Aggregation ;
-                    :target/:bizStep "packing" ;
-                    :fraction ?fraction .
-            }
+        """PREFIX : <http://example.org/def/ekg/aggregated_traces/>
+SELECT DISTINCT
+    ?Aggregation
+    (group_concat(str(?fraction)) as ?fractions)
+WHERE {
+    {
+        VALUES (?action ?RelationType ?p_direction) {
+            ("DELETE" :DirectlyFollows :source)
+            ("ADD" :DirectlyPrecedes :source)
         }
-        GROUP BY ?Aggregation ?RelationType
-            """
+
+        ?Aggregation a :Aggregation ;
+            :action ?action .
+        [] a ?RelationType ;
+            ?p_direction ?Aggregation ;
+            :fraction ?fraction .
+
+        # Exclude packing events
+        MINUS { ?Aggregation :bizStep "packing" }
+    } UNION {
+        # Separately include 'split' due to packing
+        [] a :DirectlyFollows ;
+            :source ?Aggregation ;
+            :target/:bizStep "packing" ;
+            :fraction ?fraction .
+        ?Aggregation a :Aggregation .
+    }
+}
+GROUP BY ?Aggregation"""
     )
 
     kl_div = defaultdict(list)
@@ -401,7 +400,8 @@ VALUES ?event {
 
     return {
         b[Variable("event")]: [
-            len(model.split("-")) for model in b.get(Variable("aggregation_productModels"), [])
+            len(model.split("-"))
+            for model in b.get(Variable("aggregation_productModels"), [])
         ]
         for b in results.bindings
     }
