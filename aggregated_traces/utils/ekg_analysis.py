@@ -276,7 +276,6 @@ WHERE {
             :source ?Aggregation ;
             :target/:bizStep "packing" ;
             :fraction ?fraction .
-        ?Aggregation a :Aggregation .
     }
 }
 GROUP BY ?Aggregation"""
@@ -336,7 +335,7 @@ def compute_aggregation_average_kl_trace_graph(
     else:
         path_graph = trace_graph
 
-    aggregation_nodes = [
+    nodes = [
         n
         for n, v in get_node_attributes(path_graph, "types").items()
         if v == "http://example.org/def/ekg/aggregated_traces/Aggregation"
@@ -349,7 +348,7 @@ def compute_aggregation_average_kl_trace_graph(
     )
 
     kls = []
-    for n in aggregation_nodes:
+    for n in path_graph.nodes():
         kls.extend(aggregation_kl[n])
 
     if not kls:
