@@ -82,7 +82,7 @@ def generate_graph_visualization(
             agraph.draw(f"{base_figure_path}.svg", prog="dot")
 
     logger.log(
-        logging.INFO + 1, "compute_trace_probabilities: %.2f s", time() - start_time
+        logging.INFO + 1, "generate_graph_visualization: %.2f s", time() - start_time
     )
 
     return agraph

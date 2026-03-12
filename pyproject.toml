@@ -18,14 +18,13 @@ Homepage = "https://github.com/gitmpje/aggregated_traces"
 Issues = "https://github.com/gitmpje/aggregated_traces/issues"
 
 [tool.poetry.dependencies]
-python = "^3.11"
-ipykernel = "^6.29"
-matplotlib = "^3.9"
-networkx = "^3.3"
-pandas = "^2.2"
-pygraphviz = "^1.13"
-rdflib = "^7.0.0"
-oxrdflib = "^0.4.0"
+ipykernel = "6.29"
+matplotlib = "3.9"
+networkx = "3.3"
+pandas = "2.2"
+pygraphviz = "1.13"
+rdflib = "7.0.*"
+oxrdflib = "0.4.*"
 
 [tool.poetry.dev-dependencies]
 pytest = "^8.3"

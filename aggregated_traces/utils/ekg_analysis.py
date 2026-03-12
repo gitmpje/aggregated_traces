@@ -79,7 +79,7 @@ def compute_trace_probabilities(
             target_query = f.read()
 
         if trace_backward:
-            target_query += f"VALUES ?entity_source {{ {' '.join(e.n3() for e in source_entities) } }}"
+            target_query += f"VALUES ?entity_source {{ {' '.join(e.n3() for e in source_entities)} }}"
         else:
             if not source_entities_time:
                 max_time = rdf_trace_graph.query(
@@ -150,13 +150,21 @@ def compute_trace_probabilities(
                 " %s: path %s - probability %s (%s)"
                 % (
                     b.get(Variable("entity_source")),
-                    [f"{edge[0].toPython().split('/')[-1]}-{edge[1].toPython().split('/')[-1]}" for edge in edge_path],
+                    [
+                        f"{edge[0].toPython().split('/')[-1]}-{edge[1].toPython().split('/')[-1]}"
+                        for edge in edge_path
+                    ],
                     p_path,
                     debug_labels,
                 )
             )
 
             p += p_path
+
+        devices_quality = b.get(Variable("devices_quality"), [])
+        if devices_quality:
+            devices_quality = devices_quality.split(",")
+            devices_quality = [float(d.split("|")[-1]) for d in devices_quality]
 
         # TODO: dynamically map all variables returned by query to DataFrame
         records.append(
@@ -167,6 +175,12 @@ def compute_trace_probabilities(
                 "node_target": b[Variable("node_target")],
                 "product_model": b.get(Variable("product_model")),
                 "probability": p,
+                "nx_trace_graph-n_nodes": len(nx_trace_graph.nodes()),
+                "nx_trace_graph-n_edges": len(nx_trace_graph.edges()),
+                "trace_graph_selected-n_nodes": len(trace_graph_selected.nodes()),
+                "trace_graph_selected-n_edges": len(trace_graph_selected.edges()),
+                "n_simple_paths": len(edge_paths),
+                "devices_quality": devices_quality,
             }
         )
 

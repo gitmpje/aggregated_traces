@@ -7,6 +7,7 @@ SELECT DISTINCT
   ?entity_target
   ?node_target
   ?product_model
+  ?devices_quality
 WHERE {
   ?node_source :parentEntity ?entity_source .
 
@@ -18,4 +19,18 @@ WHERE {
 
   ?node_target :quantity/:class ?product_model .
   ?product_model a :Product .
+
+  OPTIONAL {
+    {
+      SELECT DISTINCT ?node_source (group_concat(distinct ?device_quality; separator=",") as ?devices_quality)
+      WHERE {
+        ?node_source :bizStep "packing" ;
+          :device ?device .
+
+        ?device :quality ?quality .
+        bind (concat(str(?device), "|", str(?quality)) as ?device_quality)
+      }
+      GROUP BY ?node_source
+    }
+  }
 }

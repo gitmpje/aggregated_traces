@@ -1,30 +1,45 @@
 PREFIX : <http://example.org/def/ekg/aggregated_traces/>
 
 SELECT DISTINCT
-    ?g
-    ?entity_source
-    ?node_source
-    # Work around for filter that does not work
-    (?node_source_time>=?window_start && ?node_source_time<=?window_end as ?flag_in_window)
-    ?entity_target
-    ?node_target
+  ?g
+  ?entity_source
+  ?node_source
+  # Work around for filter that does not work
+  (?node_source_time>=?window_start && ?node_source_time<=?window_end as ?flag_in_window)
+  ?entity_target
+  ?node_target
+  ?devices_quality
 WHERE {
+  {
+    ?node_source :bizStep "departing" ;
+      :timestamp ?node_source_time ;
+      :location ?entity_source .
+  } UNION {
+    ?node_source :bizStep "creating_class_instance" ;
+      :timestamp ?node_source_time ;
+      :entity ?entity_source .
+  }
+
+  # Use graph context to only traverse edges in one direction (DirectlyFollows or DirectlyPrecedes) 
+  GRAPH ?g { ?node_source (^:source/:target)+ ?node_target }
+
+  ?node_target :parentEntity ?entity_target .
+
+  # Only include packing units
+  ?entity_target a :PackingUnit ;
+    rdfs:label ?entity_target_label .
+
+  OPTIONAL {
     {
-        ?node_source :bizStep "departing" ;
-            :timestamp ?node_source_time ;
-            :location ?entity_source .
-    } UNION {
-        ?node_source :bizStep "creating_class_instance" ;
-            :timestamp ?node_source_time ;
-            :entity ?entity_source .
+      SELECT DISTINCT ?node_target (group_concat(distinct ?device_quality; separator=",") as ?devices_quality)
+      WHERE {
+        ?node_target :bizStep "packing" ;
+          :device ?device .
+
+        ?device :quality ?quality .
+        bind (concat(str(?device), "|", str(?quality)) as ?device_quality)
+      }
+      GROUP BY ?node_target
     }
-
-    # Use graph context to only traverse edges in one direction (DirectlyFollows or DirectlyPrecedes) 
-    GRAPH ?g { ?node_source (^:source/:target)+ ?node_target }
-
-    ?node_target :parentEntity ?entity_target .
-
-    # Only include packing units
-    ?entity_target a :PackingUnit ;
-        rdfs:label ?entity_target_label .
+  }
 }
