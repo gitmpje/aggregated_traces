@@ -1,6 +1,6 @@
 import logging
 
-from networkx import MultiDiGraph, get_node_attributes
+from networkx import density, get_node_attributes, MultiDiGraph
 from networkx.algorithms.simple_paths import all_simple_edge_paths
 from pandas import DataFrame
 from pathlib import Path
@@ -79,7 +79,7 @@ def compute_trace_probabilities(
             target_query = f.read()
 
         if trace_backward:
-            target_query += f"VALUES ?entity_source {{ {' '.join(e.n3() for e in source_entities) } }}"
+            target_query += f"VALUES ?entity_source {{ {' '.join(e.n3() for e in source_entities)} }}"
         else:
             if not source_entities_time:
                 max_time = rdf_trace_graph.query(
@@ -131,8 +131,10 @@ def compute_trace_probabilities(
             target=b[Variable("node_target")],
         )
 
+        path_lengths = []
         for edge_path in edge_paths:
             all_paths_edges.extend(edge_path)
+            path_lengths.append(len(edge_path))
 
             p_path = 1
             debug_labels = []
@@ -150,7 +152,10 @@ def compute_trace_probabilities(
                 " %s: path %s - probability %s (%s)"
                 % (
                     b.get(Variable("entity_source")),
-                    [f"{edge[0].toPython().split('/')[-1]}-{edge[1].toPython().split('/')[-1]}" for edge in edge_path],
+                    [
+                        f"{edge[0].toPython().split('/')[-1]}-{edge[1].toPython().split('/')[-1]}"
+                        for edge in edge_path
+                    ],
                     p_path,
                     debug_labels,
                 )
@@ -158,7 +163,15 @@ def compute_trace_probabilities(
 
             p += p_path
 
+        devices_quality = b.get(Variable("devices_quality"), [])
+        if devices_quality:
+            devices_quality = devices_quality.split(",")
+            devices_quality = [float(d.split("|")[-1]) for d in devices_quality]
+
         # TODO: dynamically map all variables returned by query to DataFrame
+        out_degrees = [
+            d[1] for d in trace_graph_selected.out_degree(trace_graph_selected.nodes())
+        ]
         records.append(
             {
                 "entity_source": b.get(Variable("entity_source")),
@@ -167,6 +180,15 @@ def compute_trace_probabilities(
                 "node_target": b[Variable("node_target")],
                 "product_model": b.get(Variable("product_model")),
                 "probability": p,
+                "nx_trace_graph-n_nodes": len(nx_trace_graph.nodes()),
+                "nx_trace_graph-n_edges": len(nx_trace_graph.edges()),
+                "trace_graph_selected-n_nodes": len(trace_graph_selected.nodes()),
+                "trace_graph_selected-n_edges": len(trace_graph_selected.edges()),
+                "n_simple_paths": len(edge_paths),
+                "out_degrees": out_degrees,
+                "path_lengths": path_lengths,
+                "density": density(trace_graph_selected),
+                "devices_quality": devices_quality,
             }
         )
 

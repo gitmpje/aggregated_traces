@@ -6,26 +6,26 @@ authors = [
 ]
 description = "Package for working with Event Knowledge Graphs including aggregated entities"
 readme = "README.md"
-requires-python = ">=3.11"
+requires-python = ">=3.11,<=3.12"
 classifiers = [
     "Programming Language :: Python :: 3",
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
+]
+dependencies = [
+    "ipykernel==7.2.*",
+    "matplotlib==3.9.*",
+    "networkx==3.6.*",
+    "pandas==3.0.*",
+    "pygraphviz==1.14",
+    "rdflib==7.0.*",
+    "oxrdflib==0.4.*",
 ]
 
 [project.urls]
 Homepage = "https://github.com/gitmpje/aggregated_traces"
 Issues = "https://github.com/gitmpje/aggregated_traces/issues"
 
-[tool.poetry.dependencies]
-python = "^3.11"
-ipykernel = "^6.29"
-matplotlib = "^3.9"
-networkx = "^3.3"
-pandas = "^2.2"
-pygraphviz = "^1.13"
-rdflib = "^7.0.0"
-oxrdflib = "^0.4.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^8.3"

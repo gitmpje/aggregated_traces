@@ -155,7 +155,7 @@ def get_attributes(b: dict, t: str) -> Dict[str, str]:
     return {
         k.toPython().replace(f"?{t}_", ""): v.toPython()
         for k, v in b.items()
-        if k.toPython().startswith(f"?{t}_")
+        if k.toPython().startswith(f"?{t}_") and v is not None
     }
 
 
