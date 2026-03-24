@@ -23,6 +23,10 @@ dependencies = [
     "scipy>=1.17.1",
     "pydoe2>=1.3.0",
     "seaborn>=0.13.2",
+    "boto3>=1.42.68",
+    "statsmodels>=0.14.6",
+    "scikit-learn>=1.8.0",
+    "reportlab>=4.4.10",
 ]
 
 [project.urls]
@@ -32,6 +36,14 @@ Issues = "https://github.com/gitmpje/aggregated_traces/issues"
 [tool.poetry.dev-dependencies]
 pytest = "^8.3"
 
+[tool.uv.sources]
+aggregated-event-data = { path = "../../../../mnt/c/users/s158699/documents/phd/experiments/simulation/aggregated_event_data", editable = true }
+
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
+
+[dependency-groups]
+dev = [
+    "aggregated-event-data",
+]
