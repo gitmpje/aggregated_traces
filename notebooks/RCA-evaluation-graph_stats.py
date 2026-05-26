@@ -26,6 +26,7 @@ METRICS = [
     ("n_simple_paths", int),
     ("avg_path_length", float),
     ("max_path_length", int),
+    ("unique_entity_targets", int),
 ]
 
 LATEX_MAP = {
@@ -41,6 +42,7 @@ LATEX_MAP = {
     "avg_path_length": r"$\frac{\sum_{p \in Paths} |p|}{|Paths|}$",
     "max_path_length": r"$\max(\{|p| : p \in Paths\})$",
     "n_simple_paths": r"$|Paths|$",
+    "unique_entity_targets": r"$|N_{target}|$",
 }
 
 report_name = "combined_report_DoE_revision"
@@ -54,8 +56,10 @@ df_combined = read_csv(
         "n_simple_paths",
         "out_degrees",
         "path_lengths",
+        "probabilities",
     ],
 )
+
 output_path = "output/backward/suppl-DoE_backward-graph_statistics.tex"
 
 print("Loaded DataFrame")
@@ -72,6 +76,27 @@ df_combined["avg_path_length"] = df_combined["path_lengths"].apply(
     lambda x: sum(x) / len(x)
 )
 df_combined["max_path_length"] = df_combined["path_lengths"].apply(lambda x: max(x))
+
+
+def _count_unique_entity_targets(probabilities_json):
+    parsed = json.loads(probabilities_json)
+    if isinstance(parsed, dict):
+        parsed = [parsed]
+    if not isinstance(parsed, list):
+        return 0
+
+    unique_targets = {
+        entry.get("entity_target")
+        for entry in parsed
+        if isinstance(entry, dict) and "entity_target" in entry
+    }
+    unique_targets.discard(None)
+    return len(unique_targets)
+
+
+df_combined["unique_entity_targets"] = df_combined["probabilities"].apply(
+    _count_unique_entity_targets
+)
 
 print("Computed graph metrics")
 
@@ -168,6 +193,7 @@ Notation:
     \item $R_{trace}$: set of edges for given type of trace
     \item $G_{trace} = (N_{trace}, R_{trace})$: graph with the nodes and edges selected for tracing
     \item $Paths$: set of simple paths extracted by Algorithm 1.
+    \item $N_{target} = \{n | n \in Entity \wedge type_n=type_{target}\}$: set of target entities
 \end{itemize}
 """)
 

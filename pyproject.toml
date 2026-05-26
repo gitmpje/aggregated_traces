@@ -17,7 +17,6 @@ dependencies = [
     "matplotlib==3.9.*",
     "networkx==3.6.*",
     "pandas==3.0.*",
-    "pygraphviz==1.14",
     "rdflib==7.0.*",
     "oxrdflib==0.4.*",
     "scipy>=1.17.1",
@@ -36,14 +35,6 @@ Issues = "https://github.com/gitmpje/aggregated_traces/issues"
 [tool.poetry.dev-dependencies]
 pytest = "^8.3"
 
-[tool.uv.sources]
-aggregated-event-data = { path = "../../../../mnt/c/users/s158699/documents/phd/experiments/simulation/aggregated_event_data", editable = true }
-
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
-
-[dependency-groups]
-dev = [
-    "aggregated-event-data",
-]
